@@ -1,0 +1,10 @@
+# Talismane-terminology .gitignore
+target/
+dist/
+build/
+bin/
+data/
+logs/
+.classpath
+.settings
+.project
