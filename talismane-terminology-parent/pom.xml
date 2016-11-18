@@ -14,6 +14,7 @@
 	<modules>
 		<module>../talismane_term_extractor</module>
 		<module>../talismane_term_viewer</module>
+		<module>../talismane-terminology-distribution</module>
 	</modules>
 	<distributionManagement>
 		<snapshotRepository>
