@@ -70,6 +70,10 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.googlecode.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
 			<scope>test</scope>
@@ -102,10 +106,6 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
 		</dependency>
 	</dependencies>
 </project>
