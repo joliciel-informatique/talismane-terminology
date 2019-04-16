@@ -12,8 +12,8 @@
 		<moduleSet>
 			<useAllReactorProjects>true</useAllReactorProjects>
 			<includes>
-				<include>com.joliciel.talismane:talismane-term-extractor</include>
-				<include>com.joliciel.talismane:talismane-term-viewer</include>
+				<include>com.joliciel.talismane-terminology:talismane-term-extractor</include>
+				<include>com.joliciel.talismane-terminology:talismane-term-viewer</include>
 			</includes>
 			<binaries>
 				<unpack>false</unpack>

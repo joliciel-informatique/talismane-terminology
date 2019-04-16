@@ -22,6 +22,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -49,11 +50,17 @@ import com.joliciel.talismane.utils.StringUtils;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+
 public class TalismaneTermExtractorMain {
 	private static final Logger LOG = LoggerFactory.getLogger(TalismaneTermExtractorMain.class);
 
 	private enum Command {
-		analyse, extract, list
+		analyse,
+		extract,
+		list
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -69,7 +76,7 @@ public class TalismaneTermExtractorMain {
 
 		String logConfigPath = argMap.get("logConfigFile");
 		argMap.remove("logConfigFile");
-		LogUtils.configureLogging(logConfigPath);
+		configureLogging(logConfigPath);
 
 		Map<String, String> innerArgs = new HashMap<String, String>();
 		for (Entry<String, String> argEntry : argMap.entrySet()) {
@@ -229,5 +236,43 @@ public class TalismaneTermExtractorMain {
 		InputStream inputStream = TalismaneTermExtractorMain.class.getResourceAsStream(path);
 
 		return inputStream;
+	}
+
+	/**
+	 * If logConfigPath is not null, use it to configure logging. Otherwise, use
+	 * the default configuration file.
+	 */
+	public static void configureLogging(String logConfigPath) {
+		try {
+			LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+			JoranConfigurator configurator = new JoranConfigurator();
+			configurator.setContext(loggerContext);
+			if (logConfigPath != null) {
+				File slf4jFile = new File(logConfigPath);
+
+				if (slf4jFile.exists()) {
+					// Call context.reset() to clear any previous configuration,
+					// e.g. default configuration
+					loggerContext.reset();
+					configurator.doConfigure(slf4jFile);
+				} else {
+					throw new TalismaneException("missing logConfigFile: " + slf4jFile.getCanonicalPath());
+				}
+			} else {
+				InputStream stream = LogUtils.class.getResourceAsStream("/com/joliciel/talismane/terminology/resources/default-logback.xml");
+
+				configurator.setContext(loggerContext);
+				// Call context.reset() to clear any previous configuration,
+				// e.g. default configuration
+				loggerContext.reset();
+				configurator.doConfigure(stream);
+			}
+		} catch (JoranException e) {
+			LogUtils.logError(LOG, e);
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			LogUtils.logError(LOG, e);
+			throw new RuntimeException(e);
+		}
 	}
 }

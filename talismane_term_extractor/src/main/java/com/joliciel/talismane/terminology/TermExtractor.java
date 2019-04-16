@@ -216,6 +216,9 @@ public class TermExtractor implements ParseConfigurationProcessor {
 		nounPhrases = new TreeSet<String>();
 
 		for (Expansion expansion : expansions) {
+			if (expansion.display().length() == 0)
+				continue;
+
 			DependencyNode node = expansion.getNode();
 			Term term = terminologyBase.findTerm(expansion.display());
 			if (term.isNew()) {
@@ -258,6 +261,8 @@ public class TermExtractor implements ParseConfigurationProcessor {
 			}
 
 			for (Expansion parent : expansion.getParents()) {
+				if (parent.display().length() == 0)
+					continue;
 				Term parentTerm = terminologyBase.findTerm(parent.display());
 				if (parentTerm.isNew()) {
 					parentTerm.setLexicalWordCount(parent.getLexicalWordCount());
@@ -267,6 +272,8 @@ public class TermExtractor implements ParseConfigurationProcessor {
 			}
 
 			for (Expansion child : expansion.getChildren()) {
+				if (child.display().length() == 0)
+					continue;
 				Term childTerm = terminologyBase.findTerm(child.display());
 				if (childTerm.isNew()) {
 					childTerm.setLexicalWordCount(child.getLexicalWordCount());
