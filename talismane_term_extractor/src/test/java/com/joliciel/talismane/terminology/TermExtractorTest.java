@@ -56,14 +56,14 @@ import com.joliciel.talismane.terminology.TermExtractor.Expansion;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import mockit.NonStrict;
-import mockit.NonStrictExpectations;
+import mockit.Expectations;
+import mockit.Mocked;
 
 public class TermExtractorTest {
 	private static final Logger LOG = LoggerFactory.getLogger(TermExtractorTest.class);
 
 	@Test
-	public void testGetExpansionStrings(@NonStrict final TerminologyBase terminologyBase) throws Exception {
+	public void testGetExpansionStrings(@Mocked final TerminologyBase terminologyBase) throws Exception {
 		InputStream tagsetInputStream = getClass().getResourceAsStream("talismaneTagset_fr.txt");
 		Scanner tagsetScanner = new Scanner(tagsetInputStream);
 
@@ -113,11 +113,12 @@ public class TermExtractorTest {
 		ParseConfiguration configuration = corpusReader.nextConfiguration();
 		LOG.debug(configuration.toString());
 
-		new NonStrictExpectations() {
+		new Expectations() {
 			Term term;
 			{
 				terminologyBase.findTerm(anyString);
-				returns(term);
+				result = term;
+				minTimes = 0;
 			}
 		};
 
@@ -129,10 +130,10 @@ public class TermExtractorTest {
 
 		// test depth (1)
 		int depth = 1;
-		Map<PosTaggedToken, List<Expansion>> expansionsPerNoun = new HashMap<PosTaggedToken, List<Expansion>>();
+		Map<PosTaggedToken, List<Expansion>> expansionsPerNoun = new HashMap<>();
 		termExtractor.setMaxDepth(depth);
 		List<Expansion> expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
-		Set<String> expansionStrings = new TreeSet<String>();
+		Set<String> expansionStrings = new TreeSet<>();
 		for (Expansion expansion : expansions) {
 			expansionStrings.add(expansion.display());
 		}
@@ -142,7 +143,7 @@ public class TermExtractorTest {
 			LOG.debug(expansionString);
 		}
 		String[] limitedDepthExpansionArray = new String[] { "chat" };
-		List<String> limitedDepthExpansions = new ArrayList<String>();
+		List<String> limitedDepthExpansions = new ArrayList<>();
 		for (String expansion : limitedDepthExpansionArray)
 			limitedDepthExpansions.add(expansion);
 
@@ -153,10 +154,10 @@ public class TermExtractorTest {
 
 		// test depth (2)
 		depth = 2;
-		expansionsPerNoun = new HashMap<PosTaggedToken, List<Expansion>>();
+		expansionsPerNoun = new HashMap<>();
 		termExtractor.setMaxDepth(depth);
 		expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
-		expansionStrings = new TreeSet<String>();
+		expansionStrings = new TreeSet<>();
 		for (Expansion expansion : expansions) {
 			expansionStrings.add(expansion.display());
 		}
@@ -219,7 +220,7 @@ public class TermExtractorTest {
 		depth = 3;
 		String[] depth3Additions = new String[] { " maternelle", };
 
-		List<String> depth3Expansions = new ArrayList<String>();
+		List<String> depth3Expansions = new ArrayList<>();
 		for (String depth2Expansion : depth2Array) {
 			if (depth2Expansion.endsWith("grand-mère")) {
 				for (String depth3Addition : depth3Additions) {
@@ -234,10 +235,10 @@ public class TermExtractorTest {
 			LOG.debug(expansionString);
 		}
 
-		expansionsPerNoun = new HashMap<PosTaggedToken, List<Expansion>>();
+		expansionsPerNoun = new HashMap<>();
 		termExtractor.setMaxDepth(depth);
 		expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
-		expansionStrings = new TreeSet<String>();
+		expansionStrings = new TreeSet<>();
 		for (Expansion expansion : expansions) {
 			expansionStrings.add(expansion.display());
 		}
@@ -267,7 +268,7 @@ public class TermExtractorTest {
 		depth = 4;
 		String[] depth4Additions = new String[] { " de sa deuxième femme" };
 
-		List<String> depth4Expansions = new ArrayList<String>();
+		List<String> depth4Expansions = new ArrayList<>();
 		for (String depth3Expansion : depth3Expansions) {
 			if (depth3Expansion.endsWith("maternelle")) {
 				for (String depth4Addition : depth4Additions) {
@@ -283,10 +284,10 @@ public class TermExtractorTest {
 			LOG.debug(expansionString);
 		}
 
-		expansionsPerNoun = new HashMap<PosTaggedToken, List<Expansion>>();
+		expansionsPerNoun = new HashMap<>();
 		termExtractor.setMaxDepth(depth);
 		expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
-		expansionStrings = new TreeSet<String>();
+		expansionStrings = new TreeSet<>();
 		for (Expansion expansion : expansions) {
 			expansionStrings.add(expansion.display());
 		}
@@ -314,7 +315,7 @@ public class TermExtractorTest {
 	}
 
 	@Test
-	public void testGetPluralStrings(@NonStrict final TerminologyBase terminologyBase) throws Exception {
+	public void testGetPluralStrings(@Mocked final TerminologyBase terminologyBase) throws Exception {
 		InputStream tagsetInputStream = getClass().getResourceAsStream("talismaneTagset_fr.txt");
 		Scanner tagsetScanner = new Scanner(tagsetInputStream);
 
@@ -359,11 +360,12 @@ public class TermExtractorTest {
 		ParseConfiguration configuration = corpusReader.nextConfiguration();
 		LOG.debug(configuration.toString());
 
-		new NonStrictExpectations() {
+		new Expectations() {
 			Term term;
 			{
 				terminologyBase.findTerm(anyString);
-				returns(term);
+				result = term;
+				minTimes = 0;
 			}
 		};
 
@@ -375,10 +377,10 @@ public class TermExtractorTest {
 
 		// test depth (1)
 		int depth = 1;
-		Map<PosTaggedToken, List<Expansion>> expansionsPerNoun = new HashMap<PosTaggedToken, List<Expansion>>();
+		Map<PosTaggedToken, List<Expansion>> expansionsPerNoun = new HashMap<>();
 		termExtractor.setMaxDepth(depth);
 		List<Expansion> expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
-		Set<String> expansionStrings = new TreeSet<String>();
+		Set<String> expansionStrings = new TreeSet<>();
 		for (Expansion expansion : expansions) {
 			expansionStrings.add(expansion.display());
 		}
@@ -388,7 +390,7 @@ public class TermExtractorTest {
 			LOG.debug(expansionString);
 		}
 		String[] limitedDepthExpansionArray = new String[] { "chat" };
-		List<String> limitedDepthExpansions = new ArrayList<String>();
+		List<String> limitedDepthExpansions = new ArrayList<>();
 		for (String expansion : limitedDepthExpansionArray)
 			limitedDepthExpansions.add(expansion);
 
@@ -399,10 +401,10 @@ public class TermExtractorTest {
 
 		// test depth (2)
 		depth = 2;
-		expansionsPerNoun = new HashMap<PosTaggedToken, List<Expansion>>();
+		expansionsPerNoun = new HashMap<>();
 		termExtractor.setMaxDepth(depth);
 		expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
-		expansionStrings = new TreeSet<String>();
+		expansionStrings = new TreeSet<>();
 		for (Expansion expansion : expansions) {
 			expansionStrings.add(expansion.display());
 		}
