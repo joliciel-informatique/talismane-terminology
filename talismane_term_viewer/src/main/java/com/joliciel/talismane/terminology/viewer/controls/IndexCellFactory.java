@@ -9,9 +9,9 @@ import com.joliciel.talismane.terminology.Term;
 @SuppressWarnings("restriction")
 public class IndexCellFactory implements Callback<TableColumn<Term, Integer>, TableCell<Term, Integer>> {
 
-	@Override
-	public TableCell<Term, Integer> call(TableColumn<Term, Integer> arg0) {
-		return new IndexCell<Term, Integer>();
-	}
+  @Override
+  public TableCell<Term, Integer> call(TableColumn<Term, Integer> arg0) {
+    return new IndexCell<Term, Integer>();
+  }
 
 }

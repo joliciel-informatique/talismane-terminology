@@ -11,22 +11,22 @@ import javafx.stage.Stage;
 @SuppressWarnings("restriction")
 public class TerminologyViewer extends Application {
 
-	public static void main(String[] args) {
-		Application.launch(TerminologyViewer.class, args);
-	}
+  public static void main(String[] args) {
+    Application.launch(TerminologyViewer.class, args);
+  }
 
-	@Override
-	public void start(Stage stage) throws Exception {
-		FXMLLoader fxmlLoader = new FXMLLoader();
+  @Override
+  public void start(Stage stage) throws Exception {
+    FXMLLoader fxmlLoader = new FXMLLoader();
 
-		URL fxmlURL = TerminologyViewer.class.getResource("resources/terminology_viewer.fxml");
-		Parent root = (Parent) fxmlLoader.load(fxmlURL.openStream());
+    URL fxmlURL = TerminologyViewer.class.getResource("resources/terminology_viewer.fxml");
+    Parent root = (Parent) fxmlLoader.load(fxmlURL.openStream());
 
-		TerminologyViewerController controller = fxmlLoader.getController();
-		controller.setPrimaryStage(stage);
+    TerminologyViewerController controller = fxmlLoader.getController();
+    controller.setPrimaryStage(stage);
 
-		stage.setTitle("Talismane Terminology Viewer");
-		stage.setScene(new Scene(root, 800, 400));
-		stage.show();
-	}
+    stage.setTitle("Talismane Terminology Viewer");
+    stage.setScene(new Scene(root, 800, 400));
+    stage.show();
+  }
 }

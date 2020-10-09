@@ -55,224 +55,224 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 
 public class TalismaneTermExtractorMain {
-	private static final Logger LOG = LoggerFactory.getLogger(TalismaneTermExtractorMain.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TalismaneTermExtractorMain.class);
 
-	private enum Command {
-		analyse,
-		extract,
-		list
-	}
+  private enum Command {
+    analyse,
+    extract,
+    list
+  }
 
-	public static void main(String[] args) throws Exception {
-		String termFilePath = null;
-		String outFilePath = null;
-		Command command = Command.extract;
-		int depth = -1;
-		String databasePropertiesPath = null;
-		String projectCode = null;
-		String terminologyPropertiesPath = null;
+  public static void main(String[] args) throws Exception {
+    String termFilePath = null;
+    String outFilePath = null;
+    Command command = Command.extract;
+    int depth = -1;
+    String databasePropertiesPath = null;
+    String projectCode = null;
+    String terminologyPropertiesPath = null;
 
-		Map<String, String> argMap = StringUtils.convertArgs(args);
+    Map<String, String> argMap = StringUtils.convertArgs(args);
 
-		String logConfigPath = argMap.get("logConfigFile");
-		argMap.remove("logConfigFile");
-		configureLogging(logConfigPath);
+    String logConfigPath = argMap.get("logConfigFile");
+    argMap.remove("logConfigFile");
+    configureLogging(logConfigPath);
 
-		Map<String, String> innerArgs = new HashMap<String, String>();
-		for (Entry<String, String> argEntry : argMap.entrySet()) {
-			String argName = argEntry.getKey();
-			String argValue = argEntry.getValue();
+    Map<String, String> innerArgs = new HashMap<String, String>();
+    for (Entry<String, String> argEntry : argMap.entrySet()) {
+      String argName = argEntry.getKey();
+      String argValue = argEntry.getValue();
 
-			if (argName.equals("command"))
-				command = Command.valueOf(argValue);
-			else if (argName.equals("termFile"))
-				termFilePath = argValue;
-			else if (argName.equals("outFile"))
-				outFilePath = argValue;
-			else if (argName.equals("depth"))
-				depth = Integer.parseInt(argValue);
-			else if (argName.equals("databaseProperties"))
-				databasePropertiesPath = argValue;
-			else if (argName.equals("terminologyProperties"))
-				terminologyPropertiesPath = argValue;
-			else if (argName.equals("projectCode"))
-				projectCode = argValue;
-			else
-				innerArgs.put(argName, argValue);
-		}
-		if (termFilePath == null && databasePropertiesPath == null)
-			throw new TalismaneException("Required argument: termFile or databasePropertiesPath");
+      if (argName.equals("command"))
+        command = Command.valueOf(argValue);
+      else if (argName.equals("termFile"))
+        termFilePath = argValue;
+      else if (argName.equals("outFile"))
+        outFilePath = argValue;
+      else if (argName.equals("depth"))
+        depth = Integer.parseInt(argValue);
+      else if (argName.equals("databaseProperties"))
+        databasePropertiesPath = argValue;
+      else if (argName.equals("terminologyProperties"))
+        terminologyPropertiesPath = argValue;
+      else if (argName.equals("projectCode"))
+        projectCode = argValue;
+      else
+        innerArgs.put(argName, argValue);
+    }
+    if (termFilePath == null && databasePropertiesPath == null)
+      throw new TalismaneException("Required argument: termFile or databasePropertiesPath");
 
-		if (termFilePath != null) {
-			String currentDirPath = System.getProperty("user.dir");
-			File termFileDir = new File(currentDirPath);
-			if (termFilePath.lastIndexOf("/") >= 0) {
-				String termFileDirPath = termFilePath.substring(0, termFilePath.lastIndexOf("/"));
-				termFileDir = new File(termFileDirPath);
-				termFileDir.mkdirs();
-			}
-		}
+    if (termFilePath != null) {
+      String currentDirPath = System.getProperty("user.dir");
+      File termFileDir = new File(currentDirPath);
+      if (termFilePath.lastIndexOf("/") >= 0) {
+        String termFileDirPath = termFilePath.substring(0, termFilePath.lastIndexOf("/"));
+        termFileDir = new File(termFileDirPath);
+        termFileDir.mkdirs();
+      }
+    }
 
-		long startTime = new Date().getTime();
-		try {
-			if (command.equals(Command.analyse)) {
-				innerArgs.put("command", "analyse");
-			} else {
-				innerArgs.put("command", "process");
-			}
+    long startTime = new Date().getTime();
+    try {
+      if (command.equals(Command.analyse)) {
+        innerArgs.put("command", "analyse");
+      } else {
+        innerArgs.put("command", "process");
+      }
 
-			String sessionId = "";
-			TalismaneSession talismaneSession = TalismaneSession.getInstance(sessionId);
+      String sessionId = "";
+      TalismaneSession talismaneSession = TalismaneSession.getInstance(sessionId);
 
-			String inputRegex = null;
-			InputStream regexInputStream = getInputStreamFromResource("parser_conll_with_location_input_regex.txt");
-			try (Scanner regexScanner = new Scanner(regexInputStream, "UTF-8")) {
-				inputRegex = regexScanner.nextLine();
-			}
-			Map<String, Object> configValues = new HashMap<>();
-			configValues.put("talismane.core.train.parser.readerRegex", inputRegex);
+      String inputRegex = null;
+      InputStream regexInputStream = getInputStreamFromResource("parser_conll_with_location_input_regex.txt");
+      try (Scanner regexScanner = new Scanner(regexInputStream, "UTF-8")) {
+        inputRegex = regexScanner.nextLine();
+      }
+      Map<String, Object> configValues = new HashMap<>();
+      configValues.put("talismane.core.train.parser.readerRegex", inputRegex);
 
-			Config conf = ConfigFactory.parseMap(configValues).withFallback(ConfigFactory.load());
+      Config conf = ConfigFactory.parseMap(configValues).withFallback(ConfigFactory.load());
 
-			TalismaneConfig config = new TalismaneConfig(innerArgs, conf, talismaneSession);
+      TalismaneConfig config = new TalismaneConfig(innerArgs, conf, talismaneSession);
 
-			TerminologyBase terminologyBase = null;
+      TerminologyBase terminologyBase = null;
 
-			if (projectCode == null)
-				throw new TalismaneException("Required argument: projectCode");
+      if (projectCode == null)
+        throw new TalismaneException("Required argument: projectCode");
 
-			File file = new File(databasePropertiesPath);
-			FileInputStream fis = new FileInputStream(file);
-			Properties dataSourceProperties = new Properties();
-			dataSourceProperties.load(fis);
-			terminologyBase = new PostGresTerminologyBase(projectCode, dataSourceProperties);
+      File file = new File(databasePropertiesPath);
+      FileInputStream fis = new FileInputStream(file);
+      Properties dataSourceProperties = new Properties();
+      dataSourceProperties.load(fis);
+      terminologyBase = new PostGresTerminologyBase(projectCode, dataSourceProperties);
 
-			if (command.equals(Command.analyse) || command.equals(Command.extract)) {
-				Locale locale = talismaneSession.getLocale();
-				Map<TerminologyProperty, String> terminologyProperties = new HashMap<TerminologyProperty, String>();
-				if (terminologyPropertiesPath != null) {
-					Map<String, String> terminologyPropertiesStr = StringUtils.getArgMap(terminologyPropertiesPath);
-					for (String key : terminologyPropertiesStr.keySet()) {
-						try {
-							TerminologyProperty property = TerminologyProperty.valueOf(key);
-							terminologyProperties.put(property, terminologyPropertiesStr.get(key));
-						} catch (IllegalArgumentException e) {
-							throw new TalismaneException("Unknown terminology property: " + key);
-						}
-					}
-				} else {
-					terminologyProperties = getDefaultTerminologyProperties(locale);
-				}
-				if (depth <= 0 && !terminologyProperties.containsKey(TerminologyProperty.maxDepth))
-					throw new TalismaneException("Required argument: depth");
+      if (command.equals(Command.analyse) || command.equals(Command.extract)) {
+        Locale locale = talismaneSession.getLocale();
+        Map<TerminologyProperty, String> terminologyProperties = new HashMap<TerminologyProperty, String>();
+        if (terminologyPropertiesPath != null) {
+          Map<String, String> terminologyPropertiesStr = StringUtils.getArgMap(terminologyPropertiesPath);
+          for (String key : terminologyPropertiesStr.keySet()) {
+            try {
+              TerminologyProperty property = TerminologyProperty.valueOf(key);
+              terminologyProperties.put(property, terminologyPropertiesStr.get(key));
+            } catch (IllegalArgumentException e) {
+              throw new TalismaneException("Unknown terminology property: " + key);
+            }
+          }
+        } else {
+          terminologyProperties = getDefaultTerminologyProperties(locale);
+        }
+        if (depth <= 0 && !terminologyProperties.containsKey(TerminologyProperty.maxDepth))
+          throw new TalismaneException("Required argument: depth");
 
-				Charset outputCharset = config.getOutputCharset();
+        Charset outputCharset = config.getOutputCharset();
 
-				TermExtractor termExtractor = new TermExtractor(terminologyBase, terminologyProperties, talismaneSession);
-				if (depth > 0)
-					termExtractor.setMaxDepth(depth);
-				termExtractor.setOutFilePath(termFilePath);
+        TermExtractor termExtractor = new TermExtractor(terminologyBase, terminologyProperties, talismaneSession);
+        if (depth > 0)
+          termExtractor.setMaxDepth(depth);
+        termExtractor.setOutFilePath(termFilePath);
 
-				if (outFilePath != null) {
-					if (outFilePath.lastIndexOf("/") >= 0) {
-						String outFileDirPath = outFilePath.substring(0, outFilePath.lastIndexOf("/"));
-						File outFileDir = new File(outFileDirPath);
-						outFileDir.mkdirs();
-					}
-					File outFile = new File(outFilePath);
-					outFile.delete();
-					outFile.createNewFile();
+        if (outFilePath != null) {
+          if (outFilePath.lastIndexOf("/") >= 0) {
+            String outFileDirPath = outFilePath.substring(0, outFilePath.lastIndexOf("/"));
+            File outFileDir = new File(outFileDirPath);
+            outFileDir.mkdirs();
+          }
+          File outFile = new File(outFilePath);
+          outFile.delete();
+          outFile.createNewFile();
 
-					Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFilePath), outputCharset));
-					TermAnalysisWriter termAnalysisWriter = new TermAnalysisWriter(writer);
-					termExtractor.addTermObserver(termAnalysisWriter);
-				}
+          Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFilePath), outputCharset));
+          TermAnalysisWriter termAnalysisWriter = new TermAnalysisWriter(writer);
+          termExtractor.addTermObserver(termAnalysisWriter);
+        }
 
-				Talismane talismane = config.getTalismane();
-				talismane.setParseConfigurationProcessor(termExtractor);
-				talismane.process();
-			} else if (command.equals(Command.list)) {
+        Talismane talismane = config.getTalismane();
+        talismane.setParseConfigurationProcessor(termExtractor);
+        talismane.process();
+      } else if (command.equals(Command.list)) {
 
-				List<Term> terms = terminologyBase.findTerms(2, null, 0, null, null);
-				for (Term term : terms) {
-					LOG.debug("Term: " + term.getText());
-					LOG.debug("Frequency: " + term.getFrequency());
-					LOG.debug("Heads: " + term.getHeads());
-					LOG.debug("Expansions: " + term.getExpansions());
-					LOG.debug("Contexts: " + term.getContexts());
-				}
-			}
-		} finally {
-			long endTime = new Date().getTime();
-			long totalTime = endTime - startTime;
-			LOG.info("Total time: " + totalTime);
-		}
-	}
+        List<Term> terms = terminologyBase.findTerms(2, null, 0, null, null);
+        for (Term term : terms) {
+          LOG.debug("Term: " + term.getText());
+          LOG.debug("Frequency: " + term.getFrequency());
+          LOG.debug("Heads: " + term.getHeads());
+          LOG.debug("Expansions: " + term.getExpansions());
+          LOG.debug("Contexts: " + term.getContexts());
+        }
+      }
+    } finally {
+      long endTime = new Date().getTime();
+      long totalTime = endTime - startTime;
+      LOG.info("Total time: " + totalTime);
+    }
+  }
 
-	public static Map<TerminologyProperty, String> getDefaultTerminologyProperties(Locale locale) {
-		Map<TerminologyProperty, String> terminologyProperties = new HashMap<TerminologyProperty, String>();
-		if (locale.getLanguage().equals("fr")) {
-			terminologyProperties.put(TerminologyProperty.adjectivalTags, "ADJ,VPP");
-			terminologyProperties.put(TerminologyProperty.coordinationLabels, "coord,dep_coord");
-			terminologyProperties.put(TerminologyProperty.determinentTags, "DET");
-			terminologyProperties.put(TerminologyProperty.nominalTags, "NC,NPP");
-			terminologyProperties.put(TerminologyProperty.nonStandaloneIfHasDependents, "VPR");
-			terminologyProperties.put(TerminologyProperty.nonStandaloneTags, "P,CC,CS,PONCT,P+D");
-			terminologyProperties.put(TerminologyProperty.nonTopLevelLabels, "det,coord,dep_coord");
-			terminologyProperties.put(TerminologyProperty.prepositionalTags, "P,P+D");
-			terminologyProperties.put(TerminologyProperty.termStopTags, "V,VS,VIMP,PRO,P+PRO,PROREL,PROWH,PONCT");
-			terminologyProperties.put(TerminologyProperty.zeroDepthLabels, "prep,det,coord,dep_coord");
-			terminologyProperties.put(TerminologyProperty.lemmaGender, "m");
-			terminologyProperties.put(TerminologyProperty.lemmaNumber, "s");
-		} else {
-			throw new TalismaneException("Terminology extraction properties unknown for language: " + locale.getLanguage());
-		}
-		return terminologyProperties;
-	}
+  public static Map<TerminologyProperty, String> getDefaultTerminologyProperties(Locale locale) {
+    Map<TerminologyProperty, String> terminologyProperties = new HashMap<TerminologyProperty, String>();
+    if (locale.getLanguage().equals("fr")) {
+      terminologyProperties.put(TerminologyProperty.adjectivalTags, "ADJ,VPP");
+      terminologyProperties.put(TerminologyProperty.coordinationLabels, "coord,dep_coord");
+      terminologyProperties.put(TerminologyProperty.determinentTags, "DET");
+      terminologyProperties.put(TerminologyProperty.nominalTags, "NC,NPP");
+      terminologyProperties.put(TerminologyProperty.nonStandaloneIfHasDependents, "VPR");
+      terminologyProperties.put(TerminologyProperty.nonStandaloneTags, "P,CC,CS,PONCT,P+D");
+      terminologyProperties.put(TerminologyProperty.nonTopLevelLabels, "det,coord,dep_coord");
+      terminologyProperties.put(TerminologyProperty.prepositionalTags, "P,P+D");
+      terminologyProperties.put(TerminologyProperty.termStopTags, "V,VS,VIMP,PRO,P+PRO,PROREL,PROWH,PONCT");
+      terminologyProperties.put(TerminologyProperty.zeroDepthLabels, "prep,det,coord,dep_coord");
+      terminologyProperties.put(TerminologyProperty.lemmaGender, "m");
+      terminologyProperties.put(TerminologyProperty.lemmaNumber, "s");
+    } else {
+      throw new TalismaneException("Terminology extraction properties unknown for language: " + locale.getLanguage());
+    }
+    return terminologyProperties;
+  }
 
-	public static InputStream getInputStreamFromResource(String resource) {
-		String path = "resources/" + resource;
-		LOG.debug("Getting " + path);
-		InputStream inputStream = TalismaneTermExtractorMain.class.getResourceAsStream(path);
+  public static InputStream getInputStreamFromResource(String resource) {
+    String path = "resources/" + resource;
+    LOG.debug("Getting " + path);
+    InputStream inputStream = TalismaneTermExtractorMain.class.getResourceAsStream(path);
 
-		return inputStream;
-	}
+    return inputStream;
+  }
 
-	/**
-	 * If logConfigPath is not null, use it to configure logging. Otherwise, use
-	 * the default configuration file.
-	 */
-	public static void configureLogging(String logConfigPath) {
-		try {
-			LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-			JoranConfigurator configurator = new JoranConfigurator();
-			configurator.setContext(loggerContext);
-			if (logConfigPath != null) {
-				File slf4jFile = new File(logConfigPath);
+  /**
+   * If logConfigPath is not null, use it to configure logging. Otherwise, use
+   * the default configuration file.
+   */
+  public static void configureLogging(String logConfigPath) {
+    try {
+      LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+      JoranConfigurator configurator = new JoranConfigurator();
+      configurator.setContext(loggerContext);
+      if (logConfigPath != null) {
+        File slf4jFile = new File(logConfigPath);
 
-				if (slf4jFile.exists()) {
-					// Call context.reset() to clear any previous configuration,
-					// e.g. default configuration
-					loggerContext.reset();
-					configurator.doConfigure(slf4jFile);
-				} else {
-					throw new TalismaneException("missing logConfigFile: " + slf4jFile.getCanonicalPath());
-				}
-			} else {
-				InputStream stream = LogUtils.class.getResourceAsStream("/com/joliciel/talismane/terminology/resources/default-logback.xml");
+        if (slf4jFile.exists()) {
+          // Call context.reset() to clear any previous configuration,
+          // e.g. default configuration
+          loggerContext.reset();
+          configurator.doConfigure(slf4jFile);
+        } else {
+          throw new TalismaneException("missing logConfigFile: " + slf4jFile.getCanonicalPath());
+        }
+      } else {
+        InputStream stream = LogUtils.class.getResourceAsStream("/com/joliciel/talismane/terminology/resources/default-logback.xml");
 
-				configurator.setContext(loggerContext);
-				// Call context.reset() to clear any previous configuration,
-				// e.g. default configuration
-				loggerContext.reset();
-				configurator.doConfigure(stream);
-			}
-		} catch (JoranException e) {
-			LogUtils.logError(LOG, e);
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			LogUtils.logError(LOG, e);
-			throw new RuntimeException(e);
-		}
-	}
+        configurator.setContext(loggerContext);
+        // Call context.reset() to clear any previous configuration,
+        // e.g. default configuration
+        loggerContext.reset();
+        configurator.doConfigure(stream);
+      }
+    } catch (JoranException e) {
+      LogUtils.logError(LOG, e);
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      LogUtils.logError(LOG, e);
+      throw new RuntimeException(e);
+    }
+  }
 }

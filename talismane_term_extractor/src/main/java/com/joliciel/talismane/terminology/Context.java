@@ -24,23 +24,23 @@ package com.joliciel.talismane.terminology;
  *
  */
 public interface Context {
-	boolean isNew();
-	
-	public String getFileName();
-	public int getColumnNumber();
-	public int getLineNumber();
-	
-	public int getEndLineNumber();
-	public void setEndLineNumber(int endLineNumber);
+  boolean isNew();
+  
+  public String getFileName();
+  public int getColumnNumber();
+  public int getLineNumber();
+  
+  public int getEndLineNumber();
+  public void setEndLineNumber(int endLineNumber);
 
-	public int getEndColumnNumber();
-	public void setEndColumnNumber(int endColumnNumber);
+  public int getEndColumnNumber();
+  public void setEndColumnNumber(int endColumnNumber);
 
-	public String getTextSegment();
-	public void setTextSegment(String textSegment);
-	
-	public Term getTerm();
-	public void setTerm(Term term);
-	
-	public void save();
+  public String getTextSegment();
+  public void setTextSegment(String textSegment);
+  
+  public Term getTerm();
+  public void setTerm(Term term);
+  
+  public void save();
 }

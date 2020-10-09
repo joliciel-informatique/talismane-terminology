@@ -19,7 +19,7 @@
 package com.joliciel.talismane.terminology;
 
 public interface TermObserver {
-	public void onNewContext(String context);
-	
-	public void onNewTerm(Term term);
+  public void onNewContext(String context);
+  
+  public void onNewTerm(Term term);
 }

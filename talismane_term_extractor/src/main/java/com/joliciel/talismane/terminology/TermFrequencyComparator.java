@@ -22,19 +22,19 @@ import java.util.Comparator;
 
 public class TermFrequencyComparator implements Comparator<Term> {
 
-	@Override
-	public int compare(Term o1, Term o2) {
-		if (o1==o2)
-			return 0;
-		if (o1.equals(o2))
-			return 0;
-		if (o1.getFrequency()!=o2.getFrequency()) {
-			return o2.getFrequency() - o1.getFrequency();
-		}
-		if (!o1.getText().equals(o2.getText())) {
-			return o1.getText().compareTo(o2.getText());
-		}
-		return 1;
-	}
+  @Override
+  public int compare(Term o1, Term o2) {
+    if (o1==o2)
+      return 0;
+    if (o1.equals(o2))
+      return 0;
+    if (o1.getFrequency()!=o2.getFrequency()) {
+      return o2.getFrequency() - o1.getFrequency();
+    }
+    if (!o1.getText().equals(o2.getText())) {
+      return o1.getText().compareTo(o2.getText());
+    }
+    return 1;
+  }
 
 }
