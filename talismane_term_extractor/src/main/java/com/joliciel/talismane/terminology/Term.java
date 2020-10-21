@@ -27,63 +27,63 @@ import java.util.Set;
  *
  */
 public interface Term {
-	public String getText();
-	
-	/**
-	 * The heads are any terms containing this term, with exactly one degree
-	 * of additional syntactic depth.
-	 * e.g. for the term "wine", "bottle of wine" is a head.
-	 */
-	public Set<Term> getHeads();
-	
-	/**
-	 * The expansions are any terms in which this term is contained,
-	 * with exactly 1 degree of additional syntactic depth.
-	 * For example, for the term "bottle", "bottle of wine" is an expansion.
-	 * However, "bottle of red wine" is not an expansion (2 degrees of depth) -
-	 * it is an expansion of "bottle of wine".
-	 */
-	public Set<Term> getExpansions();
-	
-	/**
-	 * The parents are terms of which this term is an expansion.
-	 * For example, for the term "bottle of wine", "bottle" is a parent.
-	 */
-	public Set<Term> getParents();
-	
-	public List<Context> getContexts();
-	
-	public void addHead(Term head);
-	public void addExpansion(Term expansion);
-	public void addContext(Context context);
-	
-	/**
-	 * The number of times this term appears in the corpus.
-	 */
-	public int getFrequency();
-	
-	/**
-	 * The number of expansions this term has.
-	 */
-	public int getExpansionCount();
-	
-	/**
-	 * The number of heads this term has.
-	 */
-	public int getHeadCount();
-	
-	/**
-	 * The number of lexical words in this term (as opposed to function words).
-	 */
-	public int getLexicalWordCount();
-	public void setLexicalWordCount(int lexicalWordCount);
-	
-	/**
-	 * Has this term been marked as a true term for exporting?
-	 */
-	public boolean isMarked();
-	public void setMarked(boolean marked);
-	
-	public boolean isNew();
-	public void save();
+  public String getText();
+  
+  /**
+   * The heads are any terms containing this term, with exactly one degree
+   * of additional syntactic depth.
+   * e.g. for the term "wine", "bottle of wine" is a head.
+   */
+  public Set<Term> getHeads();
+  
+  /**
+   * The expansions are any terms in which this term is contained,
+   * with exactly 1 degree of additional syntactic depth.
+   * For example, for the term "bottle", "bottle of wine" is an expansion.
+   * However, "bottle of red wine" is not an expansion (2 degrees of depth) -
+   * it is an expansion of "bottle of wine".
+   */
+  public Set<Term> getExpansions();
+  
+  /**
+   * The parents are terms of which this term is an expansion.
+   * For example, for the term "bottle of wine", "bottle" is a parent.
+   */
+  public Set<Term> getParents();
+  
+  public List<Context> getContexts();
+  
+  public void addHead(Term head);
+  public void addExpansion(Term expansion);
+  public void addContext(Context context);
+  
+  /**
+   * The number of times this term appears in the corpus.
+   */
+  public int getFrequency();
+  
+  /**
+   * The number of expansions this term has.
+   */
+  public int getExpansionCount();
+  
+  /**
+   * The number of heads this term has.
+   */
+  public int getHeadCount();
+  
+  /**
+   * The number of lexical words in this term (as opposed to function words).
+   */
+  public int getLexicalWordCount();
+  public void setLexicalWordCount(int lexicalWordCount);
+  
+  /**
+   * Has this term been marked as a true term for exporting?
+   */
+  public boolean isMarked();
+  public void setMarked(boolean marked);
+  
+  public boolean isNew();
+  public void save();
 }

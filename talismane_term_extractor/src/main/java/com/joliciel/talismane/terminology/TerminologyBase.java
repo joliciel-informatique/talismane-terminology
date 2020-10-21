@@ -27,44 +27,44 @@ import java.util.Set;
  *
  */
 public interface TerminologyBase {
-	public List<Term> findTerms(final int frequencyThreshold,
-			final String searchText, final int maxLexicalWords,
-			final Boolean marked, final Boolean markedExpansions);
+  public List<Term> findTerms(final int frequencyThreshold,
+      final String searchText, final int maxLexicalWords,
+      final Boolean marked, final Boolean markedExpansions);
 
-	/**
-	 * Get a term corresponding to a particular string.
-	 */
-	public Term findTerm(String text);
-	
-	public Context findContext(Term term, String fileName, int lineNumber, int columnNumber);
-	
-	/**
-	 * Store the term in the datastore.
-	 */
-	public void storeTerm(Term term);
-	
-	public void storeContext(Context context);
-	
-	public void commit();
-	
-	/**
-	 * Load the parents of a given term from the datastore.
-	 */
-	public Set<Term> getParents(Term term);
-	
-	
-	/**
-	 * Load the heads of a given term from the datastore.
-	 */
-	public Set<Term> getHeads(Term term);
-	
-	/**
-	 * Load the expansions of a given term from the datastore.
-	 */
-	public Set<Term> getExpansions(Term term);
-	
-	/**
-	 * Load the contexts of a given term from the datastore.
-	 */
-	public List<Context> getContexts(Term term);
+  /**
+   * Get a term corresponding to a particular string.
+   */
+  public Term findTerm(String text);
+  
+  public Context findContext(Term term, String fileName, int lineNumber, int columnNumber);
+  
+  /**
+   * Store the term in the datastore.
+   */
+  public void storeTerm(Term term);
+  
+  public void storeContext(Context context);
+  
+  public void commit();
+  
+  /**
+   * Load the parents of a given term from the datastore.
+   */
+  public Set<Term> getParents(Term term);
+  
+  
+  /**
+   * Load the heads of a given term from the datastore.
+   */
+  public Set<Term> getHeads(Term term);
+  
+  /**
+   * Load the expansions of a given term from the datastore.
+   */
+  public Set<Term> getExpansions(Term term);
+  
+  /**
+   * Load the contexts of a given term from the datastore.
+   */
+  public List<Context> getContexts(Term term);
 }

@@ -23,19 +23,19 @@ import com.joliciel.talismane.terminology.TerminologyBase;
 
 
 interface PostGresContext extends Context {
-	public void setId(int id);
-	public int getId();
-	public void setColumnNumber(int columnNumber);
-	public void setLineNumber(int lineNumber);
-	public void setFileName(String fileName);
-	public int getFileId();
-	public void setFileId(int fileId);
-	public int getTermId();
-	public void setTermId(int termId);
-	
-	public boolean isDirty();
-	public void setDirty(boolean dirty);
+  public void setId(int id);
+  public int getId();
+  public void setColumnNumber(int columnNumber);
+  public void setLineNumber(int lineNumber);
+  public void setFileName(String fileName);
+  public int getFileId();
+  public void setFileId(int fileId);
+  public int getTermId();
+  public void setTermId(int termId);
+  
+  public boolean isDirty();
+  public void setDirty(boolean dirty);
 
-	public void setTerminologyBase(TerminologyBase terminologyBase);
-	public TerminologyBase getTerminologyBase();
+  public void setTerminologyBase(TerminologyBase terminologyBase);
+  public TerminologyBase getTerminologyBase();
 }
