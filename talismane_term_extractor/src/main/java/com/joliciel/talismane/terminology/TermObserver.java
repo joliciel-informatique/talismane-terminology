@@ -18,8 +18,46 @@
 //////////////////////////////////////////////////////////////////////////////
 package com.joliciel.talismane.terminology;
 
+import com.joliciel.talismane.TalismaneException;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public interface TermObserver {
-  public void onNewContext(String context);
+  void onNewContext(String context);
   
-  public void onNewTerm(Term term);
+  void onNewTerm(Term term);
+
+  /**
+   * Collect the term observers specified in the configuration key
+   * talismane.terminology.term-observers.<br/>
+   * 
+   * @return
+   * @throws TalismaneException
+   *           if a processor does not implement the TermObserver interface.
+   */
+    static List<TermObserver> getObservers() throws ReflectiveOperationException {
+    Config config = ConfigFactory.load();
+    Config parserConfig = config.getConfig("talismane.terminology");
+
+    List<TermObserver> observers = new ArrayList<>();
+    List<String> classes = parserConfig.getStringList("term-observers");
+
+    for (String className : classes) {
+      @SuppressWarnings("rawtypes")
+      Class untypedClass = Class.forName(className);
+      if (!TermObserver.class.isAssignableFrom(untypedClass))
+        throw new TalismaneException("Class " + className + " does not implement interface " + TermObserver.class.getSimpleName());
+
+      @SuppressWarnings("unchecked")
+      Class<? extends TermObserver> clazz = untypedClass;
+      
+      TermObserver observer = clazz.getDeclaredConstructor().newInstance();
+      observers.add(observer);
+    }
+
+    return observers;
+  }
 }

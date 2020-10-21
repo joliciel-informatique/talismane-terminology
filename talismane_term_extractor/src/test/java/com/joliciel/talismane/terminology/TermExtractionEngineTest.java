@@ -18,141 +18,85 @@
 //////////////////////////////////////////////////////////////////////////////
 package com.joliciel.talismane.terminology;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.joliciel.talismane.parser.ParseConfiguration;
+import com.joliciel.talismane.parser.ParseTree;
+import com.joliciel.talismane.parser.ParserAnnotatedCorpusReader;
+import com.joliciel.talismane.parser.ParserRegexBasedCorpusReader;
+import com.joliciel.talismane.posTagger.PosTaggedToken;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.joliciel.talismane.GenericRules;
-import com.joliciel.talismane.TalismaneSession;
-import com.joliciel.talismane.lexicon.DefaultPosTagMapper;
-import com.joliciel.talismane.lexicon.LexicalEntryReader;
-import com.joliciel.talismane.lexicon.LexiconFile;
-import com.joliciel.talismane.lexicon.PosTagMapper;
-import com.joliciel.talismane.lexicon.RegexLexicalEntryReader;
-import com.joliciel.talismane.parser.ArcEagerTransitionSystem;
-import com.joliciel.talismane.parser.ParseConfiguration;
-import com.joliciel.talismane.parser.ParserAnnotatedCorpusReader;
-import com.joliciel.talismane.parser.ParserRegexBasedCorpusReader;
-import com.joliciel.talismane.parser.TransitionSystem;
-import com.joliciel.talismane.posTagger.PosTagSet;
-import com.joliciel.talismane.posTagger.PosTaggedToken;
-import com.joliciel.talismane.terminology.TermExtractor.Expansion;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TermExtractorTest {
-  private static final Logger LOG = LoggerFactory.getLogger(TermExtractorTest.class);
+public class TermExtractionEngineTest {
+  private static final Logger LOG = LoggerFactory.getLogger(TermExtractionEngineTest.class);
 
   @Test
   public void testGetExpansionStrings() throws Exception {
-    InputStream tagsetInputStream = getClass().getResourceAsStream("talismaneTagset_fr.txt");
-    Scanner tagsetScanner = new Scanner(tagsetInputStream);
+    System.setProperty("config.file", "src/test/resources/test.conf");
+    ConfigFactory.invalidateCaches();
+    String sessionId = "test";
 
     InputStream configurationInputStream = getClass().getResourceAsStream("termTestCONLL.txt");
     Reader configurationReader = new BufferedReader(new InputStreamReader(configurationInputStream, "UTF-8"));
 
-    PosTagSet tagSet = new PosTagSet(tagsetScanner);
-    TalismaneSession talismaneSession = TalismaneSession.getInstance("");
-    talismaneSession.setPosTagSet(tagSet);
-
-    TransitionSystem transitionSystem = new ArcEagerTransitionSystem();
-    talismaneSession.setTransitionSystem(transitionSystem);
-
-    talismaneSession.setLinguisticRules(new GenericRules(talismaneSession));
-
-    // Read morphological info from export
-    LexicalEntryReader lexicalEntryReader = null;
-    try (InputStream inputStream = getClass().getResourceAsStream("talismane_conll_morph_regex.txt");
-        Scanner lexicalEntryRegexScanner = new Scanner(inputStream, "UTF-8")) {
-      lexicalEntryReader = new RegexLexicalEntryReader(lexicalEntryRegexScanner);
-    }
-
-    // Construct a mini-lexicon for lemmatising plurals
-    LexiconFile lexiconFile = null;
-    try (InputStream lexiconInputStream = getClass().getResourceAsStream("lefffExtract.txt");
-        Scanner lexiconScanner = new Scanner(lexiconInputStream, "UTF-8");
-        InputStream lexiconRegex = getClass().getResourceAsStream("lefff-ext-3.2_regex.txt");
-        Scanner regexScanner = new Scanner(lexiconRegex, "UTF-8")) {
-      RegexLexicalEntryReader lexiconEntryReader = new RegexLexicalEntryReader(regexScanner);
-      lexiconFile = new LexiconFile("lefff", lexiconScanner, lexiconEntryReader);
-      lexiconFile.load();
-    }
-
-    try (InputStream posTagMapInputStream = getClass().getResourceAsStream("lefff-ext-3.2_posTagMap.txt");
-        Scanner posTagMapScanner = new Scanner(posTagMapInputStream, "UTF-8");) {
-      PosTagMapper posTagMapper = new DefaultPosTagMapper(posTagMapScanner, tagSet);
-      lexiconFile.setPosTagMapper(posTagMapper);
-
-      talismaneSession.addLexicon(lexiconFile);
-    }
-
     Config config = ConfigFactory.load();
-    String parserInputRegex = config.getString("talismane.core.train.parser.readerRegex");
-    ParserAnnotatedCorpusReader corpusReader = new ParserRegexBasedCorpusReader(parserInputRegex, configurationReader, talismaneSession);
-    corpusReader.setLexicalEntryReader(lexicalEntryReader);
+    Config readerConfig = config.getConfig("talismane.core." + sessionId + ".parser.input");
+    ParserAnnotatedCorpusReader corpusReader = new ParserRegexBasedCorpusReader(configurationReader, readerConfig, sessionId);
 
     ParseConfiguration configuration = corpusReader.nextConfiguration();
     LOG.debug(configuration.toString());
 
+    ParseTree parseTree = new ParseTree(configuration, true);
+    LOG.debug(parseTree.toString());
+
     final TerminologyBase terminologyBase = mock(TerminologyBase.class);
     final Term term = mock(Term.class);
     when(terminologyBase.findTerm(anyString())).thenReturn(term);
-
-    TermExtractor termExtractor = new TermExtractor(terminologyBase, TalismaneTermExtractorMain.getDefaultTerminologyProperties(Locale.FRENCH),
-        talismaneSession);
-
+    
     PosTaggedToken chat = configuration.getPosTagSequence().get(3);
     assertEquals("chat", chat.getToken().getText());
 
     // test depth (1)
-    int depth = 1;
+    TermExtractionEngine engine = new TermExtractionEngine(sessionId, 1);
     Map<PosTaggedToken, List<Expansion>> expansionsPerNoun = new HashMap<>();
-    termExtractor.setMaxDepth(depth);
-    List<Expansion> expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
+    List<Expansion> expansions = engine.getExpansions(chat, configuration, 0, expansionsPerNoun);
     Set<String> expansionStrings = new TreeSet<>();
     for (Expansion expansion : expansions) {
       expansionStrings.add(expansion.display());
     }
 
-    LOG.debug("All expansions depth " + depth + ":");
+    LOG.debug("All expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : expansionStrings) {
       LOG.debug(expansionString);
     }
     String[] limitedDepthExpansionArray = new String[] { "chat" };
-    List<String> limitedDepthExpansions = new ArrayList<>();
+    Set<String> limitedDepthExpansions = new TreeSet<>();
     for (String expansion : limitedDepthExpansionArray)
       limitedDepthExpansions.add(expansion);
 
     for (String expansion : limitedDepthExpansions) {
       assertTrue("Missing expansion: " + expansion, expansionStrings.contains(expansion));
     }
-    assertEquals(limitedDepthExpansions.size(), expansionStrings.size());
+    assertEquals(limitedDepthExpansions, expansionStrings);
 
     // test depth (2)
-    depth = 2;
+    engine = new TermExtractionEngine(sessionId, 2);
     expansionsPerNoun = new HashMap<>();
-    termExtractor.setMaxDepth(depth);
-    expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
+    expansions = engine.getExpansions(chat, configuration, 0, expansionsPerNoun);
     expansionStrings = new TreeSet<>();
     for (Expansion expansion : expansions) {
       expansionStrings.add(expansion.display());
@@ -164,12 +108,12 @@ public class TermExtractorTest {
     for (String expansion : depth2Array)
       limitedDepthExpansions.add(expansion);
 
-    LOG.debug("Expected expansions depth " + depth + ":");
+    LOG.debug("Expected expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : limitedDepthExpansions) {
       LOG.debug(expansionString);
     }
 
-    LOG.debug("Actual expansions depth " + depth + ":");
+    LOG.debug("Actual expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : expansionStrings) {
       LOG.debug(expansionString);
     }
@@ -178,7 +122,7 @@ public class TermExtractorTest {
       assertTrue("Missing expansion: " + expansion, expansionStrings.contains(expansion));
     }
 
-    LOG.debug("Parents and children depth " + depth);
+    LOG.debug("Parents and children depth " + engine.getMaxDepth());
     boolean foundParent1 = false;
     boolean foundParent2 = false;
     boolean foundChild1 = false;
@@ -210,10 +154,10 @@ public class TermExtractorTest {
     assertTrue("Didn't find parent2", foundParent2);
     assertTrue("Didn't find child1", foundChild1);
 
-    assertEquals(limitedDepthExpansions.size(), expansionStrings.size());
+    assertEquals(limitedDepthExpansions, expansionStrings);
 
     // depth test (3)
-    depth = 3;
+    engine = new TermExtractionEngine(sessionId, 3);
     String[] depth3Additions = new String[] { " maternelle", };
 
     List<String> depth3Expansions = new ArrayList<>();
@@ -226,19 +170,18 @@ public class TermExtractorTest {
       }
     }
     limitedDepthExpansions.addAll(depth3Expansions);
-    LOG.debug("Expected expansions depth " + depth + ":");
+    LOG.debug("Expected expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : limitedDepthExpansions) {
       LOG.debug(expansionString);
     }
 
     expansionsPerNoun = new HashMap<>();
-    termExtractor.setMaxDepth(depth);
-    expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
+    expansions = engine.getExpansions(chat, configuration, 0, expansionsPerNoun);
     expansionStrings = new TreeSet<>();
     for (Expansion expansion : expansions) {
       expansionStrings.add(expansion.display());
     }
-    LOG.debug("Actual expansions depth " + depth + ":");
+    LOG.debug("Actual expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : expansionStrings) {
       LOG.debug(expansionString);
     }
@@ -247,7 +190,7 @@ public class TermExtractorTest {
       assertTrue("Missing expansion: " + expansion, expansionStrings.contains(expansion));
     }
 
-    LOG.debug("Parents and children depth " + depth);
+    LOG.debug("Parents and children depth " + engine.getMaxDepth());
     for (Expansion expansion : expansions) {
       LOG.debug("# " + expansion.display());
       for (Expansion parent : expansion.getParents()) {
@@ -258,10 +201,10 @@ public class TermExtractorTest {
       }
     }
 
-    assertEquals(limitedDepthExpansions.size(), expansionStrings.size());
+    assertEquals(limitedDepthExpansions, expansionStrings);
 
     // depth test (4)
-    depth = 4;
+    engine = new TermExtractionEngine(sessionId, 4);
     String[] depth4Additions = new String[] { " de sa deuxième femme" };
 
     List<String> depth4Expansions = new ArrayList<>();
@@ -275,20 +218,19 @@ public class TermExtractorTest {
     }
     limitedDepthExpansions.addAll(depth4Expansions);
 
-    LOG.debug("Expected expansions depth " + depth + ":");
+    LOG.debug("Expected expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : limitedDepthExpansions) {
       LOG.debug(expansionString);
     }
 
     expansionsPerNoun = new HashMap<>();
-    termExtractor.setMaxDepth(depth);
-    expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
+    expansions = engine.getExpansions(chat, configuration, 0, expansionsPerNoun);
     expansionStrings = new TreeSet<>();
     for (Expansion expansion : expansions) {
       expansionStrings.add(expansion.display());
     }
 
-    LOG.debug("Actual expansions depth " + depth + ":");
+    LOG.debug("Actual expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : expansionStrings) {
       LOG.debug(expansionString);
     }
@@ -297,7 +239,7 @@ public class TermExtractorTest {
       assertTrue("Missing expansion: " + expansion, expansionStrings.contains(expansion));
     }
 
-    LOG.debug("Parents and children depth " + depth);
+    LOG.debug("Parents and children depth " + engine.getMaxDepth());
     for (Expansion expansion : expansions) {
       LOG.debug("# " + expansion.display());
       for (Expansion parent : expansion.getParents()) {
@@ -307,51 +249,21 @@ public class TermExtractorTest {
         LOG.debug("Child: " + child.display());
       }
     }
-    assertEquals(limitedDepthExpansions.size(), expansionStrings.size());
+    assertEquals(limitedDepthExpansions, expansionStrings);
   }
 
   @Test
   public void testGetPluralStrings() throws Exception {
-    InputStream tagsetInputStream = getClass().getResourceAsStream("talismaneTagset_fr.txt");
-    Scanner tagsetScanner = new Scanner(tagsetInputStream);
-
+    System.setProperty("config.file", "src/test/resources/test.conf");
+    ConfigFactory.invalidateCaches();
+    String sessionId = "test";
+    
     InputStream configurationInputStream = getClass().getResourceAsStream("termTestCONLLPlural.txt");
     Reader configurationReader = new BufferedReader(new InputStreamReader(configurationInputStream, "UTF-8"));
 
-    PosTagSet tagSet = new PosTagSet(tagsetScanner);
-    TalismaneSession talismaneSession = TalismaneSession.getInstance("");
-    talismaneSession.setPosTagSet(tagSet);
-
-    TransitionSystem transitionSystem = new ArcEagerTransitionSystem();
-    talismaneSession.setTransitionSystem(transitionSystem);
-
-    talismaneSession.setLinguisticRules(new GenericRules(talismaneSession));
-
-    // Read morphological info from export
-    InputStream inputStream = getClass().getResourceAsStream("talismane_conll_morph_regex.txt");
-    Scanner lexicalEntryRegexScanner = new Scanner(inputStream, "UTF-8");
-    LexicalEntryReader lexicalEntryReader = new RegexLexicalEntryReader(lexicalEntryRegexScanner);
-
-    // Construct a mini-lexicon for lemmatising plurals
-    InputStream lexiconInputStream = getClass().getResourceAsStream("lefffExtract.txt");
-    Scanner lexiconScanner = new Scanner(lexiconInputStream, "UTF-8");
-    InputStream lexiconRegex = getClass().getResourceAsStream("lefff-ext-3.2_regex.txt");
-    Scanner regexScanner = new Scanner(lexiconRegex, "UTF-8");
-    RegexLexicalEntryReader lexiconEntryReader = new RegexLexicalEntryReader(regexScanner);
-    LexiconFile lexiconFile = new LexiconFile("lefff", lexiconScanner, lexiconEntryReader);
-    lexiconFile.load();
-
-    InputStream posTagMapInputStream = getClass().getResourceAsStream("lefff-ext-3.2_posTagMap.txt");
-    Scanner posTagMapScanner = new Scanner(posTagMapInputStream, "UTF-8");
-    PosTagMapper posTagMapper = new DefaultPosTagMapper(posTagMapScanner, tagSet);
-    lexiconFile.setPosTagMapper(posTagMapper);
-
-    talismaneSession.addLexicon(lexiconFile);
-
     Config config = ConfigFactory.load();
-    String parserInputRegex = config.getString("talismane.core.train.parser.readerRegex");
-    ParserAnnotatedCorpusReader corpusReader = new ParserRegexBasedCorpusReader(parserInputRegex, configurationReader, talismaneSession);
-    corpusReader.setLexicalEntryReader(lexicalEntryReader);
+    Config readerConfig = config.getConfig("talismane.core." + sessionId + ".parser.input");
+    ParserAnnotatedCorpusReader corpusReader = new ParserRegexBasedCorpusReader(configurationReader, readerConfig, sessionId);
 
     ParseConfiguration configuration = corpusReader.nextConfiguration();
     LOG.debug(configuration.toString());
@@ -360,42 +272,36 @@ public class TermExtractorTest {
     final Term term = mock(Term.class);
     when(terminologyBase.findTerm(anyString())).thenReturn(term);
     
-
-    TermExtractor termExtractor = new TermExtractor(terminologyBase, TalismaneTermExtractorMain.getDefaultTerminologyProperties(Locale.FRENCH),
-        talismaneSession);
-
     PosTaggedToken chat = configuration.getPosTagSequence().get(3);
     assertEquals("chats", chat.getToken().getText());
 
     // test depth (1)
-    int depth = 1;
+    TermExtractionEngine engine = new TermExtractionEngine(sessionId, 1);
     Map<PosTaggedToken, List<Expansion>> expansionsPerNoun = new HashMap<>();
-    termExtractor.setMaxDepth(depth);
-    List<Expansion> expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
+    List<Expansion> expansions = engine.getExpansions(chat, configuration, 0, expansionsPerNoun);
     Set<String> expansionStrings = new TreeSet<>();
     for (Expansion expansion : expansions) {
       expansionStrings.add(expansion.display());
     }
 
-    LOG.debug("All expansions depth " + depth + ":");
+    LOG.debug("All expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : expansionStrings) {
       LOG.debug(expansionString);
     }
     String[] limitedDepthExpansionArray = new String[] { "chat" };
-    List<String> limitedDepthExpansions = new ArrayList<>();
+    Set<String> limitedDepthExpansions = new TreeSet<>();
     for (String expansion : limitedDepthExpansionArray)
       limitedDepthExpansions.add(expansion);
 
     for (String expansion : limitedDepthExpansions) {
       assertTrue("Missing expansion: " + expansion, expansionStrings.contains(expansion));
     }
-    assertEquals(limitedDepthExpansions.size(), expansionStrings.size());
+    assertEquals(limitedDepthExpansions, expansionStrings);
 
     // test depth (2)
-    depth = 2;
+    engine = new TermExtractionEngine(sessionId, 2);
     expansionsPerNoun = new HashMap<>();
-    termExtractor.setMaxDepth(depth);
-    expansions = termExtractor.getExpansions(chat, configuration, 0, expansionsPerNoun);
+    expansions = engine.getExpansions(chat, configuration, 0, expansionsPerNoun);
     expansionStrings = new TreeSet<>();
     for (Expansion expansion : expansions) {
       expansionStrings.add(expansion.display());
@@ -407,12 +313,12 @@ public class TermExtractorTest {
     for (String expansion : depth2Array)
       limitedDepthExpansions.add(expansion);
 
-    LOG.debug("Expected expansions depth " + depth + ":");
+    LOG.debug("Expected expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : limitedDepthExpansions) {
       LOG.debug(expansionString);
     }
 
-    LOG.debug("Actual expansions depth " + depth + ":");
+    LOG.debug("Actual expansions depth " + engine.getMaxDepth() + ":");
     for (String expansionString : expansionStrings) {
       LOG.debug(expansionString);
     }
@@ -421,7 +327,7 @@ public class TermExtractorTest {
       assertTrue("Missing expansion: " + expansion, expansionStrings.contains(expansion));
     }
 
-    LOG.debug("Parents and children depth " + depth);
+    LOG.debug("Parents and children depth " + engine.getMaxDepth());
     boolean foundParent1 = false;
     boolean foundParent2 = false;
     boolean foundChild1 = false;
@@ -453,6 +359,6 @@ public class TermExtractorTest {
     assertTrue("Didn't find parent2", foundParent2);
     assertTrue("Didn't find child1", foundChild1);
 
-    assertEquals(limitedDepthExpansions.size(), expansionStrings.size());
+    assertEquals(limitedDepthExpansions, expansionStrings);
   }
 }

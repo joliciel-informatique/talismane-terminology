@@ -56,12 +56,6 @@ public class PreferencesController {
   @FXML
   private TextField txtArguments;
   @FXML
-  private TextField txtDatabaseURL;
-  @FXML
-  private TextField txtDatabaseUsername;
-  @FXML
-  private PasswordField txtDatabasePassword;
-  @FXML
   private TextField txtDatabaseProjectCode;
   @FXML
   private TextField txtCSVSeparator;
@@ -131,9 +125,6 @@ public class PreferencesController {
     Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFile), "UTF-8"));
     writer.write("editor=" + txtEditor.getText() + "\n");
     writer.write("arguments=" + txtArguments.getText() + "\n");
-    writer.write("jdbc.url=" + txtDatabaseURL.getText() + "\n");
-    writer.write("jdbc.username=" + txtDatabaseUsername.getText() + "\n");
-    writer.write("jdbc.password=" + txtDatabasePassword.getText() + "\n");
     writer.write("project.code=" + txtDatabaseProjectCode.getText() + "\n");
     writer.write("csvSeparator=" + txtCSVSeparator.getText() + "\n");
     writer.flush();

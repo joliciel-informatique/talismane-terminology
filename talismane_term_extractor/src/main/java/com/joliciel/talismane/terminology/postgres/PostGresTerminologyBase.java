@@ -74,6 +74,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
     hikariConfig.setMinimumIdle(config.getInt("min-idle"));
     hikariConfig.setMaxLifetime(config.getDuration("max-lifetime").toMillis());
     hikariConfig.setPoolName("HikariPool-terminology");
+    hikariConfig.setConnectionTestQuery("SELECT * FROM project;");
     
     this.dataSource = new HikariDataSource(hikariConfig);
   }
