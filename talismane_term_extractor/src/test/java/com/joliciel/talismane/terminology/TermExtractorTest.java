@@ -56,14 +56,15 @@ import com.joliciel.talismane.terminology.TermExtractor.Expansion;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import mockit.Expectations;
-import mockit.Mocked;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TermExtractorTest {
   private static final Logger LOG = LoggerFactory.getLogger(TermExtractorTest.class);
 
   @Test
-  public void testGetExpansionStrings(@Mocked final TerminologyBase terminologyBase) throws Exception {
+  public void testGetExpansionStrings() throws Exception {
     InputStream tagsetInputStream = getClass().getResourceAsStream("talismaneTagset_fr.txt");
     Scanner tagsetScanner = new Scanner(tagsetInputStream);
 
@@ -113,14 +114,9 @@ public class TermExtractorTest {
     ParseConfiguration configuration = corpusReader.nextConfiguration();
     LOG.debug(configuration.toString());
 
-    new Expectations() {
-      Term term;
-      {
-        terminologyBase.findTerm(anyString);
-        result = term;
-        minTimes = 0;
-      }
-    };
+    final TerminologyBase terminologyBase = mock(TerminologyBase.class);
+    final Term term = mock(Term.class);
+    when(terminologyBase.findTerm(anyString())).thenReturn(term);
 
     TermExtractor termExtractor = new TermExtractor(terminologyBase, TalismaneTermExtractorMain.getDefaultTerminologyProperties(Locale.FRENCH),
         talismaneSession);
@@ -315,7 +311,7 @@ public class TermExtractorTest {
   }
 
   @Test
-  public void testGetPluralStrings(@Mocked final TerminologyBase terminologyBase) throws Exception {
+  public void testGetPluralStrings() throws Exception {
     InputStream tagsetInputStream = getClass().getResourceAsStream("talismaneTagset_fr.txt");
     Scanner tagsetScanner = new Scanner(tagsetInputStream);
 
@@ -360,14 +356,10 @@ public class TermExtractorTest {
     ParseConfiguration configuration = corpusReader.nextConfiguration();
     LOG.debug(configuration.toString());
 
-    new Expectations() {
-      Term term;
-      {
-        terminologyBase.findTerm(anyString);
-        result = term;
-        minTimes = 0;
-      }
-    };
+    final TerminologyBase terminologyBase = mock(TerminologyBase.class);
+    final Term term = mock(Term.class);
+    when(terminologyBase.findTerm(anyString())).thenReturn(term);
+    
 
     TermExtractor termExtractor = new TermExtractor(terminologyBase, TalismaneTermExtractorMain.getDefaultTerminologyProperties(Locale.FRENCH),
         talismaneSession);
