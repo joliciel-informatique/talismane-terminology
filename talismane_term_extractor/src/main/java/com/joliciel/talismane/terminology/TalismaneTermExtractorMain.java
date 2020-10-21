@@ -68,7 +68,6 @@ public class TalismaneTermExtractorMain {
     String outFilePath = null;
     Command command = Command.extract;
     int depth = -1;
-    String databasePropertiesPath = null;
     String projectCode = null;
     String terminologyPropertiesPath = null;
 
@@ -91,8 +90,6 @@ public class TalismaneTermExtractorMain {
         outFilePath = argValue;
       else if (argName.equals("depth"))
         depth = Integer.parseInt(argValue);
-      else if (argName.equals("databaseProperties"))
-        databasePropertiesPath = argValue;
       else if (argName.equals("terminologyProperties"))
         terminologyPropertiesPath = argValue;
       else if (argName.equals("projectCode"))
@@ -100,8 +97,11 @@ public class TalismaneTermExtractorMain {
       else
         innerArgs.put(argName, argValue);
     }
-    if (termFilePath == null && databasePropertiesPath == null)
-      throw new TalismaneException("Required argument: termFile or databasePropertiesPath");
+    
+    Config config = ConfigFactory.load().getConfig("talismane.terminology");
+    
+    if (termFilePath == null && !config.hasPath("jdbc.url"))
+      throw new TalismaneException("Required argument: termFile or JDBC URL in configuration");
 
     if (termFilePath != null) {
       String currentDirPath = System.getProperty("user.dir");
@@ -134,18 +134,14 @@ public class TalismaneTermExtractorMain {
 
       Config conf = ConfigFactory.parseMap(configValues).withFallback(ConfigFactory.load());
 
-      TalismaneConfig config = new TalismaneConfig(innerArgs, conf, talismaneSession);
+      TalismaneConfig talismaneConfig = new TalismaneConfig(innerArgs, conf, talismaneSession);
 
       TerminologyBase terminologyBase = null;
 
       if (projectCode == null)
         throw new TalismaneException("Required argument: projectCode");
-
-      File file = new File(databasePropertiesPath);
-      FileInputStream fis = new FileInputStream(file);
-      Properties dataSourceProperties = new Properties();
-      dataSourceProperties.load(fis);
-      terminologyBase = new PostGresTerminologyBase(projectCode, dataSourceProperties);
+      
+      terminologyBase = new PostGresTerminologyBase(projectCode);
 
       if (command.equals(Command.analyse) || command.equals(Command.extract)) {
         Locale locale = talismaneSession.getLocale();
@@ -166,7 +162,7 @@ public class TalismaneTermExtractorMain {
         if (depth <= 0 && !terminologyProperties.containsKey(TerminologyProperty.maxDepth))
           throw new TalismaneException("Required argument: depth");
 
-        Charset outputCharset = config.getOutputCharset();
+        Charset outputCharset = talismaneConfig.getOutputCharset();
 
         TermExtractor termExtractor = new TermExtractor(terminologyBase, terminologyProperties, talismaneSession);
         if (depth > 0)
@@ -188,18 +184,20 @@ public class TalismaneTermExtractorMain {
           termExtractor.addTermObserver(termAnalysisWriter);
         }
 
-        Talismane talismane = config.getTalismane();
+        Talismane talismane = talismaneConfig.getTalismane();
         talismane.setParseConfigurationProcessor(termExtractor);
         talismane.process();
       } else if (command.equals(Command.list)) {
 
         List<Term> terms = terminologyBase.findTerms(2, null, 0, null, null);
         for (Term term : terms) {
-          LOG.debug("Term: " + term.getText());
-          LOG.debug("Frequency: " + term.getFrequency());
-          LOG.debug("Heads: " + term.getHeads());
-          LOG.debug("Expansions: " + term.getExpansions());
-          LOG.debug("Contexts: " + term.getContexts());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Term: " + term.getText());
+            LOG.debug("Frequency: " + term.getFrequency());
+            LOG.debug("Heads: " + term.getHeads());
+            LOG.debug("Expansions: " + term.getExpansions());
+            LOG.debug("Contexts: " + term.getContexts());
+          }
         }
       }
     } finally {

@@ -93,12 +93,6 @@ public class PreferencesController {
             txtEditor.setText(value);
           } else if (parameter.equals("arguments")) {
             txtArguments.setText(value);
-          } else if (parameter.equals("jdbc.url")) {
-            txtDatabaseURL.setText(value);
-          } else if (parameter.equals("jdbc.username")) {
-            txtDatabaseUsername.setText(value);
-          } else if (parameter.equals("jdbc.password")) {
-            txtDatabasePassword.setText(value);
           } else if (parameter.equals("project.code")) {
             txtDatabaseProjectCode.setText(value);
           } else if (parameter.equals("csvSeparator")) {
@@ -146,9 +140,6 @@ public class PreferencesController {
     writer.close();
     primaryController.setEditor(txtEditor.getText());
     primaryController.setArguments(txtArguments.getText());
-    primaryController.setDatabaseURL(txtDatabaseURL.getText());
-    primaryController.setDatabaseUsername(txtDatabaseUsername.getText());
-    primaryController.setDatabasePassword(txtDatabasePassword.getText());
     primaryController.setProjectCode(txtDatabaseProjectCode.getText());
     primaryController.setCsvSeparator(txtCSVSeparator.getText());
     primaryStage.close();

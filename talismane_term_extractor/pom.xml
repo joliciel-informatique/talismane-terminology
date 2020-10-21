@@ -56,8 +56,8 @@
       <artifactId>postgresql</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.mchange</groupId>
-      <artifactId>c3p0</artifactId>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
