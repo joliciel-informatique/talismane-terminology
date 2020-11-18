@@ -18,20 +18,16 @@
 //////////////////////////////////////////////////////////////////////////////
 package com.joliciel.talismane.terminology.postgres;
 
-import java.beans.PropertyVetoException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.sql.DataSource;
-
+import com.joliciel.talismane.TalismaneException;
+import com.joliciel.talismane.terminology.Context;
+import com.joliciel.talismane.terminology.Term;
+import com.joliciel.talismane.terminology.TermFrequencyComparator;
+import com.joliciel.talismane.terminology.TerminologyBase;
+import com.joliciel.talismane.utils.DaoUtils;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +38,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.ResultSetWrappingSqlRowSet;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import com.joliciel.talismane.TalismaneException;
-import com.joliciel.talismane.terminology.Context;
-import com.joliciel.talismane.terminology.Term;
-import com.joliciel.talismane.terminology.TermFrequencyComparator;
-import com.joliciel.talismane.terminology.TerminologyBase;
-import com.joliciel.talismane.utils.DaoUtils;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class PostGresTerminologyBase implements TerminologyBase {
   private static final Logger LOG = LoggerFactory.getLogger(PostGresTerminologyBase.class);
@@ -65,20 +58,25 @@ public class PostGresTerminologyBase implements TerminologyBase {
   private String projectCode;
   private int projectId;
 
-  public PostGresTerminologyBase(String projectCode, Properties connectionProperties) {
+  public PostGresTerminologyBase(String projectCode) {
     this.projectCode = projectCode;
 
-    ComboPooledDataSource ds = new ComboPooledDataSource();
-    try {
-      ds.setDriverClass(connectionProperties.getProperty("jdbc.driverClassName"));
-    } catch (PropertyVetoException e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
-    }
-    ds.setJdbcUrl(connectionProperties.getProperty("jdbc.url"));
-    ds.setUser(connectionProperties.getProperty("jdbc.username"));
-    ds.setPassword(connectionProperties.getProperty("jdbc.password"));
-    dataSource = ds;
+    Config config = ConfigFactory.load().getConfig("talismane.terminology.jdbc");
+    
+    HikariConfig hikariConfig = new HikariConfig();
+    hikariConfig.setDriverClassName(config.getString("driver-class-name"));
+    hikariConfig.setJdbcUrl(config.getString("url"));
+    hikariConfig.setUsername(config.getString("username"));
+    hikariConfig.setPassword(config.getString("password"));
+    hikariConfig.setConnectionTimeout(config.getDuration("checkout-timeout").toMillis());
+    hikariConfig.setMaximumPoolSize(config.getInt("max-pool-size"));
+    hikariConfig.setIdleTimeout(config.getDuration("idle-timeout").toMillis());
+    hikariConfig.setMinimumIdle(config.getInt("min-idle"));
+    hikariConfig.setMaxLifetime(config.getDuration("max-lifetime").toMillis());
+    hikariConfig.setPoolName("HikariPool-terminology");
+    hikariConfig.setConnectionTestQuery("SELECT * FROM project;");
+    
+    this.dataSource = new HikariDataSource(hikariConfig);
   }
 
   @Override
@@ -418,7 +416,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       if (term.isNew()) {
         String sql = "SELECT nextval('seq_term_id')";
         LOG.trace(sql);
-        int termId = jt.queryForInt(sql, paramSource);
+        int termId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("term_id", termId);
 
         sql = "INSERT INTO term (term_id, term_marked, term_text, term_lexical_words)" + " VALUES (:term_id, :term_marked, :term_text, :term_lexical_words)";
@@ -525,7 +523,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       if (context.isNew()) {
         String sql = "SELECT nextval('seq_context_id')";
         LOG.trace(sql);
-        int contextId = jt.queryForInt(sql, paramSource);
+        int contextId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("context_id", contextId);
 
         sql = "INSERT INTO context (context_id, context_start_row, context_start_column, context_end_row, context_end_column, context_text, context_file_id, context_term_id)"
@@ -593,7 +591,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       LOG.trace(sql);
       LogParameters(paramSource);
       try {
-        projectId = jt.queryForInt(sql, paramSource);
+        projectId = jt.queryForObject(sql, paramSource, Integer.class);
       } catch (EmptyResultDataAccessException ex) {
         // do nothing
       }
@@ -601,7 +599,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       if (projectId == 0) {
         sql = "SELECT nextval('seq_project_id')";
         LOG.trace(sql);
-        projectId = jt.queryForInt(sql, paramSource);
+        projectId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("project_id", projectId);
 
         sql = "INSERT INTO project (project_id, project_code)" + " VALUES (:project_id, :project_code)";
@@ -643,7 +641,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
     LOG.trace(sql);
     LogParameters(paramSource);
     try {
-      textId = jt.queryForInt(sql, paramSource);
+      textId = jt.queryForObject(sql, paramSource, Integer.class);
     } catch (EmptyResultDataAccessException ex) {
       // do nothing
     }
@@ -651,7 +649,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
     if (textId == 0) {
       sql = "SELECT nextval('seq_text_id')";
       LOG.trace(sql);
-      textId = jt.queryForInt(sql, paramSource);
+      textId = jt.queryForObject(sql, paramSource, Integer.class);
       paramSource.addValue("text_id", textId);
 
       sql = "INSERT INTO text (text_id, text_text)" + " VALUES (:text_id, :text_text)";
@@ -676,7 +674,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       LOG.trace(sql);
       LogParameters(paramSource);
       try {
-        fileId = jt.queryForInt(sql, paramSource);
+        fileId = jt.queryForObject(sql, paramSource, Integer.class);
       } catch (EmptyResultDataAccessException ex) {
         // do nothing
       }
@@ -685,7 +683,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       if (fileId == 0) {
         sql = "SELECT nextval('seq_file_id')";
         LOG.trace(sql);
-        fileId = jt.queryForInt(sql, paramSource);
+        fileId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("file_id", fileId);
 
         sql = "INSERT INTO file (file_id, file_name)" + " VALUES (:file_id, :file_name)";
@@ -701,7 +699,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
         LOG.trace(sql);
         LogParameters(paramSource);
         try {
-          jt.queryForInt(sql, paramSource);
+          jt.queryForObject(sql, paramSource, Integer.class);
           haveProjectFile = true;
         } catch (EmptyResultDataAccessException ex) {
           haveProjectFile = false;

@@ -56,12 +56,6 @@ public class PreferencesController {
   @FXML
   private TextField txtArguments;
   @FXML
-  private TextField txtDatabaseURL;
-  @FXML
-  private TextField txtDatabaseUsername;
-  @FXML
-  private PasswordField txtDatabasePassword;
-  @FXML
   private TextField txtDatabaseProjectCode;
   @FXML
   private TextField txtCSVSeparator;
@@ -93,12 +87,6 @@ public class PreferencesController {
             txtEditor.setText(value);
           } else if (parameter.equals("arguments")) {
             txtArguments.setText(value);
-          } else if (parameter.equals("jdbc.url")) {
-            txtDatabaseURL.setText(value);
-          } else if (parameter.equals("jdbc.username")) {
-            txtDatabaseUsername.setText(value);
-          } else if (parameter.equals("jdbc.password")) {
-            txtDatabasePassword.setText(value);
           } else if (parameter.equals("project.code")) {
             txtDatabaseProjectCode.setText(value);
           } else if (parameter.equals("csvSeparator")) {
@@ -137,18 +125,12 @@ public class PreferencesController {
     Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFile), "UTF-8"));
     writer.write("editor=" + txtEditor.getText() + "\n");
     writer.write("arguments=" + txtArguments.getText() + "\n");
-    writer.write("jdbc.url=" + txtDatabaseURL.getText() + "\n");
-    writer.write("jdbc.username=" + txtDatabaseUsername.getText() + "\n");
-    writer.write("jdbc.password=" + txtDatabasePassword.getText() + "\n");
     writer.write("project.code=" + txtDatabaseProjectCode.getText() + "\n");
     writer.write("csvSeparator=" + txtCSVSeparator.getText() + "\n");
     writer.flush();
     writer.close();
     primaryController.setEditor(txtEditor.getText());
     primaryController.setArguments(txtArguments.getText());
-    primaryController.setDatabaseURL(txtDatabaseURL.getText());
-    primaryController.setDatabaseUsername(txtDatabaseUsername.getText());
-    primaryController.setDatabasePassword(txtDatabasePassword.getText());
     primaryController.setProjectCode(txtDatabaseProjectCode.getText());
     primaryController.setCsvSeparator(txtCSVSeparator.getText());
     primaryStage.close();

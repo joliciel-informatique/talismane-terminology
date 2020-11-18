@@ -12,21 +12,6 @@
 	    
     <Text id="welcome-text" text="Preferences" />
 	<HBox spacing="10">
-        <Label text="Database URL:" />
-        <TextField fx:id="txtDatabaseURL"
-               prefWidth="300" />
-	</HBox>
-	<HBox spacing="10">
-        <Label text="Database Username:" />
-        <TextField fx:id="txtDatabaseUsername"
-               prefWidth="200" />
-	</HBox>
-	<HBox spacing="10">
-        <Label text="Database Password:" />
-        <PasswordField fx:id="txtDatabasePassword"
-               prefWidth="200" />
-	</HBox>
-	<HBox spacing="10">
         <Label text="Database Project Code:" />
         <TextField fx:id="txtDatabaseProjectCode"
                prefWidth="200" />

@@ -115,9 +115,6 @@ public class TerminologyViewerController {
   Stage primaryStage = null;
   String editor = null;
   String arguments = null;
-  String databaseURL = null;
-  String databaseUsername = null;
-  String databasePassword = null;
   String projectCode = null;
   String csvSeparator = ",";
 
@@ -145,12 +142,6 @@ public class TerminologyViewerController {
             editor = value;
           } else if (parameter.equals("arguments")) {
             arguments = value;
-          } else if (parameter.equals("jdbc.url")) {
-            databaseURL = value;
-          } else if (parameter.equals("jdbc.username")) {
-            databaseUsername = value;
-          } else if (parameter.equals("jdbc.password")) {
-            databasePassword = value;
           } else if (parameter.equals("project.code")) {
             projectCode = value;
           } else if (parameter.equals("csvSeparator")) {
@@ -164,12 +155,7 @@ public class TerminologyViewerController {
 
   @FXML
   protected void handleMenuFileDatabaseAction(ActionEvent event) {
-    Properties props = new Properties();
-    props.put("jdbc.driverClassName", "org.postgresql.Driver");
-    props.put("jdbc.url", databaseURL);
-    props.put("jdbc.username", databaseUsername);
-    props.put("jdbc.password", databasePassword);
-    terminologyBase = new PostGresTerminologyBase(projectCode, props);
+    terminologyBase = new PostGresTerminologyBase(projectCode);
     this.onNewTermingologyBase();
   }
 
@@ -496,30 +482,6 @@ public class TerminologyViewerController {
 
   public void setArguments(String arguments) {
     this.arguments = arguments;
-  }
-
-  public String getDatabaseURL() {
-    return databaseURL;
-  }
-
-  public void setDatabaseURL(String databaseURL) {
-    this.databaseURL = databaseURL;
-  }
-
-  public String getDatabaseUsername() {
-    return databaseUsername;
-  }
-
-  public void setDatabaseUsername(String databaseUsername) {
-    this.databaseUsername = databaseUsername;
-  }
-
-  public String getDatabasePassword() {
-    return databasePassword;
-  }
-
-  public void setDatabasePassword(String databasePassword) {
-    this.databasePassword = databasePassword;
   }
 
   public String getProjectCode() {
