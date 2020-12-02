@@ -8,6 +8,15 @@
     <artifactId>talismane-terminology-parent</artifactId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>
+  <properties>
+    <talismane.french.pack.url>
+      https://github.com/joliciel-informatique/talismane/releases/download/v6.1.0/frenchLanguagePack-6.1.0.zip
+    </talismane.french.pack.url>
+    <talismane.english.pack.url>
+      https://github.com/joliciel-informatique/talismane/releases/download/v6.1.0/englishLanguagePack-6.1.0.zip
+    </talismane.english.pack.url>
+    <talismane.language.packs.path>${project.basedir}/../languagePacks</talismane.language.packs.path>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -15,9 +24,10 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
+            <index>true</index>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.joliciel.talismane.terminology.TalismaneTermExtractorMain</mainClass>
+              <mainClass>com.joliciel.talismane.terminology.TermExtractorMain</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -29,6 +39,49 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <manifestEntries>
+                  <Main-Class>com.joliciel.talismane.terminology.TermExtractorMain</Main-Class>
+                </manifestEntries>
+              </transformer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.googlecode.maven-download-plugin</groupId>
+        <artifactId>download-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>talismane-french-pack</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>${talismane.french.pack.url}</url>
+              <outputDirectory>${talismane.language.packs.path}</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>talismane-english-pack</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>wget</goal>
+            </goals>
+            <configuration>
+              <url>${talismane.english.pack.url}</url>
+              <outputDirectory>${talismane.language.packs.path}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -56,7 +109,7 @@
       <artifactId>talismane-machine-learning</artifactId>
     </dependency>
     <dependency>
-      <groupId>postgresql</groupId>
+      <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
     </dependency>
     <dependency>
