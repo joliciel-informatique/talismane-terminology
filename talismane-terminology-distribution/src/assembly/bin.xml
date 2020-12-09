@@ -8,16 +8,20 @@
     <format>zip</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
-  <moduleSets>
-    <moduleSet>
-      <useAllReactorProjects>true</useAllReactorProjects>
+  <fileSets>
+    <fileSet>
+      <directory>../talismane-term-extractor/target</directory>
       <includes>
-        <include>com.joliciel.talismane-terminology:talismane-term-extractor</include>
-        <include>com.joliciel.talismane-terminology:talismane-term-viewer</include>
+        <include>*-shaded.jar</include>
       </includes>
-      <binaries>
-        <unpack>false</unpack>
-      </binaries>
-    </moduleSet>
-  </moduleSets>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../talismane-term-viewer/target</directory>
+      <includes>
+        <include>*-shaded.jar</include>
+      </includes>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
 </assembly>
