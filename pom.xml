@@ -12,7 +12,7 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
-    <talismane.version>6.2.0-SNAPSHOT</talismane.version>
+    <talismane.version>6.1.2</talismane.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -20,8 +20,9 @@
     <javafx.version>11.0.2</javafx.version>
   </properties>
   <modules>
-    <module>talismane_term_extractor</module>
-    <module>talismane_term_viewer</module>
+    <module>talismane-terminology-core</module>
+    <module>talismane-term-extractor</module>
+    <module>talismane-term-viewer</module>
     <module>talismane-terminology-distribution</module>
   </modules>
   <distributionManagement>
@@ -67,6 +68,11 @@
         <groupId>com.joliciel.talismane</groupId>
         <artifactId>talismane-machine-learning</artifactId>
         <version>${talismane.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.joliciel.talismane-terminology</groupId>
+        <artifactId>talismane-terminology-core</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.joliciel.talismane-terminology</groupId>

@@ -10,14 +10,14 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>../talismane_term_extractor/target</directory>
+      <directory>../talismane-term-extractor/target</directory>
       <includes>
         <include>*-shaded.jar</include>
       </includes>
       <outputDirectory></outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>../talismane_term_viewer/target</directory>
+      <directory>../talismane-term-viewer/target</directory>
       <includes>
         <include>*-shaded.jar</include>
       </includes>
