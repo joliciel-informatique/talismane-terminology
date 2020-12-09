@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  flyway:
+    build:
+      dockerfile: docker-compose/flyway.Dockerfile
+      context: ../
+    environment:
+      - POSTGRES_HOST
+      - POSTGRES_DATABASE
+      - POSTGRES_PORT
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD

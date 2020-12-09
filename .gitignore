@@ -8,3 +8,7 @@ logs/
 .classpath
 .settings
 .project
+.idea
+*.iml
+talismane_terminology_viewer.ini
+languagePacks/*.zip
