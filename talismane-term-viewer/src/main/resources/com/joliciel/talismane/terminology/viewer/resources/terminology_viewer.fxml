@@ -32,8 +32,7 @@
 		        <Label text="Search text:" />
 		        <TextField fx:id="txtSearch"
 		               prefWidth="100" />
-		        <CheckBox fx:id="chkMarked" text="Marked?" />  
-		        <CheckBox fx:id="chkExpansions" text="Expansions?" selected="true" />  
+		        <CheckBox fx:id="chkMarked" text="Marked?" />
 		        <Label text="Max lex words:" />
 		        <TextField fx:id="txtMaxLexicalWords"
 		               prefWidth="50" text="" />

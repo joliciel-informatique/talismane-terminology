@@ -11,7 +11,7 @@ services:
       dockerfile: postgres-multiple-db.Dockerfile
     environment:
       POSTGRES_USER: talismane
-      POSTGRES_PASSWORD: talismanepassword
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: 
       POSTGRES_MULTIPLE_DATABASES: '"terms","terms-test"'
     ports:

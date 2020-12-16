@@ -49,8 +49,6 @@ public class TermExtractionEngineTest {
 
   @Test
   public void testGetExpansionStrings() throws Exception {
-    System.setProperty("config.file", "src/test/resources/test.conf");
-    ConfigFactory.invalidateCaches();
     String sessionId = "test";
 
     InputStream configurationInputStream = getClass().getResourceAsStream("termTestCONLL.txt");
@@ -257,8 +255,6 @@ public class TermExtractionEngineTest {
 
   @Test
   public void testGetPluralStrings() throws Exception {
-    System.setProperty("config.file", "src/test/resources/test.conf");
-    ConfigFactory.invalidateCaches();
     String sessionId = "test";
     
     InputStream configurationInputStream = getClass().getResourceAsStream("termTestCONLLPlural.txt");

@@ -23,7 +23,7 @@ erase-dep-state: stop-dep
 export POSTGRES_HOST=postgres
 export POSTGRES_PORT=5432
 export POSTGRES_USER=talismane
-export POSTGRES_PASSWORD=talismanepassword
+export POSTGRES_PASSWORD=password
 export POSTGRES_DATABASE=terms
 
 create-schema:
