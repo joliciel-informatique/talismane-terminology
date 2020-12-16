@@ -421,7 +421,7 @@ public class TerminologyViewerController {
             argumentString = argumentString.replace("%file", context.getFileName());
             argumentString = argumentString.replace("%line", "" + context.getLineNumber());
             argumentString = argumentString.replace("%column", "" + context.getColumnNumber());
-            String command = editor + argumentString;
+            String command = editor + ' ' + argumentString;
             LOG.debug(command);
             Runtime.getRuntime().exec(command);
           }

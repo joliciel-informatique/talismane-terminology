@@ -20,15 +20,22 @@ erase-dep-state: stop-dep
 	@ cd "${CURDIR}"
 	docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/deps.yml rm
 
+export POSTGRES_HOST=postgres
+export POSTGRES_PORT=5432
+export POSTGRES_USER=talismane
+export POSTGRES_PASSWORD=talismanepassword
+export POSTGRES_DATABASE=terms
+
 create-schema:
-	cd "${CURDIR}"
+	@ cd "${CURDIR}"
 	docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/runner.yml build flyway
-	export POSTGRES_HOST=$${POSTGRES_HOST:-postgres}
-	export POSTGRES_PORT=$${POSTGRES_PORT:-5432}
-	export POSTGRES_USER=$${POSTGRES_USER:-talismane}
-	export POSTGRES_PASSWORD=$${POSTGRES_PASSWORD:-talismanepassword}
-	POSTGRES_DATABASE="terms-test" docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/runner.yml run -T flyway
-	POSTGRES_DATABASE="terms" docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/runner.yml run -T flyway
+	docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/runner.yml run -T flyway
+
+create-test-schema:
+	export POSTGRES_DATABASE=terms-test
+	@ cd "${CURDIR}"
+	docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/runner.yml build flyway
+	docker-compose -p $(COMPOSE_PROJECT) -f docker-compose/runner.yml run -T flyway
 
 clean-docker-compose:
 	cd "${CURDIR}"
