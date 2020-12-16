@@ -23,5 +23,16 @@
       </includes>
       <outputDirectory></outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>../docker-compose</directory>
+      <outputDirectory>docker-compose</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>..</directory>
+      <includes>
+        <include>Makefile</include>
+      </includes>
+      <outputDirectory></outputDirectory>
+    </fileSet>
   </fileSets>
 </assembly>
