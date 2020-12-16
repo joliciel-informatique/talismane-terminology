@@ -29,7 +29,7 @@ import java.util.Set;
 public interface TerminologyBase {
   public List<Term> findTerms(final int frequencyThreshold,
       final String searchText, final int maxLexicalWords,
-      final Boolean marked, final Boolean markedExpansions);
+      final Boolean marked);
 
   /**
    * Get a term corresponding to a particular string.

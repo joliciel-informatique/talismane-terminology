@@ -50,7 +50,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
 
   private static final String SELECT_TERM_ONLY = "term_id, term_marked, term_text, term_lexical_words";
   private static final String SELECT_TERM = SELECT_TERM_ONLY + ", count(context_id) AS term_frequency";
-  private static final String SELECT_CONTEXT = "context_id, context_start_row, context_start_column, context_end_row, context_end_column, context_text, context_file_id, context_term_id";
+  private static final String SELECT_CONTEXT = "context_id, context_start_row, context_start_column, context_end_row, context_end_column, context_text, context_file_id, context_term_id, context_project_id";
 
   private Map<String, Integer> filenameMap = new HashMap<>();
   private Map<Integer, String> fileIdMap = new HashMap<>();
@@ -80,11 +80,13 @@ public class PostGresTerminologyBase implements TerminologyBase {
   }
 
   @Override
-  public List<Term> findTerms(int frequencyThreshold, String searchText, final int maxLexicalWords, Boolean marked, Boolean markedExpansions) {
+  public List<Term> findTerms(int frequencyThreshold, String searchText, final int maxLexicalWords, Boolean marked) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_TERM + " FROM term" + " INNER JOIN context ON context_term_id = term_id"
-        + " INNER JOIN projectfile ON context_file_id = projectfile_file_id" + " WHERE projectfile_project_id = :term_project_id";
-    if (marked != null && markedExpansions != null && marked && markedExpansions) {
+    String sql = "SELECT " + SELECT_TERM
+        + " FROM term"
+        + " INNER JOIN context ON context_term_id = term_id"
+        + " WHERE context_project_id = :term_project_id";
+    if (marked != null && marked) {
       sql += " AND term_marked = :term_marked";
       if (searchText != null && searchText.length() > 0)
         sql += " AND term_text LIKE :term_text";
@@ -124,7 +126,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       terms.add(term);
     }
 
-    if (marked != null && markedExpansions != null && marked && markedExpansions) {
+    if (marked != null && marked) {
       this.addParents(terms);
       List<Term> termsWithFrequency = new ArrayList<>();
       for (Term term : terms) {
@@ -152,8 +154,10 @@ public class PostGresTerminologyBase implements TerminologyBase {
 
         NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
         String sql = "SELECT termexp_term_id, count(termexp_expansion_id) AS term_expansion_count FROM term_expansions"
-            + " INNER JOIN context ON termexp_expansion_id = context_term_id" + " INNER JOIN projectfile ON context_file_id = projectfile_file_id"
-            + " WHERE projectfile_project_id = :term_project_id" + " AND termexp_term_id IN (:term_ids)" + " GROUP BY termexp_term_id";
+            + " WHERE EXISTS (SELECT context_id FROM context WHERE context_term_id = termexp_term_id AND context_project_id = :term_project_id)"
+            + " AND EXISTS (SELECT context_id FROM context WHERE context_term_id = termexp_expansion_id AND context_project_id = :term_project_id)"
+            + " AND termexp_term_id IN (:term_ids)"
+            + " GROUP BY termexp_term_id";
 
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("term_project_id", this.getCurrentProjectId());
@@ -170,8 +174,10 @@ public class PostGresTerminologyBase implements TerminologyBase {
 
         jt = new NamedParameterJdbcTemplate(this.getDataSource());
         sql = "SELECT termhead_term_id, count(termhead_head_id) AS term_head_count FROM term_heads"
-            + " INNER JOIN context ON termhead_head_id = context_term_id" + " INNER JOIN projectfile ON context_file_id = projectfile_file_id"
-            + " WHERE projectfile_project_id = :term_project_id" + " AND termhead_term_id IN (:term_ids)" + " GROUP BY termhead_term_id";
+            + " WHERE EXISTS (SELECT context_id FROM context WHERE context_term_id = termhead_term_id AND context_project_id = :term_project_id)"
+            + " AND EXISTS (SELECT context_id FROM context WHERE context_term_id = termhead_head_id AND context_project_id = :term_project_id)"
+            + " AND termhead_term_id IN (:term_ids)"
+            + " GROUP BY termhead_term_id";
 
         paramSource = new MapSqlParameterSource();
         paramSource.addValue("term_project_id", this.getCurrentProjectId());
@@ -204,9 +210,12 @@ public class PostGresTerminologyBase implements TerminologyBase {
       List<List<Term>> subLists = ListUtils.partition(childTerms, 32000);
       for (List<Term> subList : subLists) {
         NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-        String sql = "SELECT " + SELECT_TERM + ", termexp_expansion_id FROM term_expansions" + " INNER JOIN term ON termexp_expansion_id = term_id"
-            + " INNER JOIN context ON termexp_expansion_id = context_term_id" + " INNER JOIN projectfile ON context_file_id = projectfile_file_id"
-            + " WHERE projectfile_project_id = :term_project_id" + " AND termexp_expansion_id IN (:child_terms)" + " GROUP BY " + SELECT_TERM_ONLY
+        String sql = "SELECT " + SELECT_TERM + ", termexp_expansion_id FROM term_expansions"
+            + " INNER JOIN term ON termexp_expansion_id = term_id"
+            + " INNER JOIN context ON context_term_id = term_id"
+            + " WHERE context_project_id = :term_project_id"
+            + " AND termexp_expansion_id IN (:child_terms)"
+            + " GROUP BY " + SELECT_TERM_ONLY
             + ", termexp_expansion_id";
 
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
@@ -280,9 +289,14 @@ public class PostGresTerminologyBase implements TerminologyBase {
   @Override
   public Set<Term> getParents(final Term term) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_TERM + " FROM term" + " INNER JOIN context ON context_term_id = term_id"
-        + " INNER JOIN projectfile ON context_file_id = projectfile_file_id" + " INNER JOIN term_expansions ON term_id = termexp_term_id"
-        + " WHERE projectfile_project_id = :term_project_id" + " AND termexp_expansion_id = :term_id" + " GROUP BY " + SELECT_TERM_ONLY + " ORDER BY term_text";
+    String sql = "SELECT " + SELECT_TERM
+        + " FROM term"
+        + " INNER JOIN context ON context_term_id = term_id"
+        + " INNER JOIN term_expansions ON term_id = termexp_term_id"
+        + " WHERE context_project_id = :term_project_id"
+        + " AND termexp_expansion_id = :term_id"
+        + " GROUP BY " + SELECT_TERM_ONLY
+        + " ORDER BY term_text";
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
     paramSource.addValue("term_id", ((PostGresTerm) term).getId());
     paramSource.addValue("term_project_id", this.getCurrentProjectId());
@@ -302,9 +316,14 @@ public class PostGresTerminologyBase implements TerminologyBase {
   @Override
   public Set<Term> getExpansions(Term term) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_TERM + " FROM term" + " INNER JOIN context ON context_term_id = term_id"
-        + " INNER JOIN projectfile ON context_file_id = projectfile_file_id" + " INNER JOIN term_expansions ON term_id = termexp_expansion_id"
-        + " WHERE projectfile_project_id = :term_project_id" + " AND termexp_term_id = :term_id" + " GROUP BY " + SELECT_TERM_ONLY + " ORDER BY term_text";
+    String sql = "SELECT " + SELECT_TERM
+        + " FROM term"
+        + " INNER JOIN context ON context_term_id = term_id"
+        + " INNER JOIN term_expansions ON term_id = termexp_expansion_id"
+        + " WHERE context_project_id = :term_project_id"
+        + " AND termexp_term_id = :term_id"
+        + " GROUP BY " + SELECT_TERM_ONLY
+        + " ORDER BY term_text";
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
     paramSource.addValue("term_id", ((PostGresTerm) term).getId());
     paramSource.addValue("term_project_id", this.getCurrentProjectId());
@@ -322,9 +341,14 @@ public class PostGresTerminologyBase implements TerminologyBase {
   @Override
   public Set<Term> getHeads(Term term) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_TERM + " FROM term" + " INNER JOIN context ON context_term_id = term_id"
-        + " INNER JOIN projectfile ON context_file_id = projectfile_file_id" + " INNER JOIN term_heads ON term_id = termhead_head_id"
-        + " WHERE projectfile_project_id = :term_project_id" + " AND termhead_term_id = :term_id" + " GROUP BY " + SELECT_TERM_ONLY + " ORDER BY term_text";
+    String sql = "SELECT " + SELECT_TERM
+        + " FROM term"
+        + " INNER JOIN context ON context_term_id = term_id"
+        + " INNER JOIN term_heads ON term_id = termhead_head_id"
+        + " WHERE context_project_id = :term_project_id"
+        + " AND termhead_term_id = :term_id"
+        + " GROUP BY " + SELECT_TERM_ONLY
+        + " ORDER BY term_text";
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
     paramSource.addValue("term_id", ((PostGresTerm) term).getId());
     paramSource.addValue("term_project_id", this.getCurrentProjectId());
@@ -343,8 +367,12 @@ public class PostGresTerminologyBase implements TerminologyBase {
   @Override
   public List<Context> getContexts(Term term) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_CONTEXT + " FROM context" + " INNER JOIN projectfile ON context_file_id = projectfile_file_id"
-        + " WHERE projectfile_project_id = :term_project_id" + " AND context_term_id = :context_term_id" + " ORDER BY context_id";
+    String sql = "SELECT " + SELECT_CONTEXT
+        + " FROM context"
+        + " INNER JOIN term ON context_term_id = term_id"
+        + " WHERE context_project_id = :term_project_id"
+        + " AND term_id = :context_term_id"
+        + " ORDER BY context_id";
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
     paramSource.addValue("context_term_id", ((PostGresTerm) term).getId());
     paramSource.addValue("term_project_id", this.getCurrentProjectId());
@@ -358,8 +386,11 @@ public class PostGresTerminologyBase implements TerminologyBase {
 
   Term loadTerm(int termId) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_TERM + " FROM term" + " LEFT JOIN context ON context_term_id = term_id"
-        + " LEFT JOIN projectfile ON context_file_id = projectfile_file_id" + " AND projectfile_project_id = :term_project_id" + " WHERE term_id=:term_id"
+    String sql = "SELECT " + SELECT_TERM
+        + " FROM term"
+        + " LEFT JOIN context ON context_term_id = term_id"
+        + " AND context_project_id = :term_project_id"
+        + " WHERE term_id=:term_id"
         + " GROUP BY " + SELECT_TERM_ONLY;
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
     paramSource.addValue("term_id", termId);
@@ -383,8 +414,11 @@ public class PostGresTerminologyBase implements TerminologyBase {
   public Term loadTerm(String termText) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
 
-    String sql = "SELECT " + SELECT_TERM + " FROM term" + " LEFT JOIN context ON context_term_id = term_id"
-        + " LEFT JOIN projectfile ON context_file_id = projectfile_file_id" + " AND projectfile_project_id = :term_project_id" + " WHERE term_text=:term_text"
+    String sql = "SELECT " + SELECT_TERM
+        + " FROM term"
+        + " LEFT JOIN context ON context_term_id = term_id"
+        + " AND context_project_id = :term_project_id"
+        + " WHERE term_text=:term_text"
         + " GROUP BY " + SELECT_TERM_ONLY;
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
     paramSource.addValue("term_text", termText);
@@ -419,14 +453,18 @@ public class PostGresTerminologyBase implements TerminologyBase {
         int termId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("term_id", termId);
 
-        sql = "INSERT INTO term (term_id, term_marked, term_text, term_lexical_words)" + " VALUES (:term_id, :term_marked, :term_text, :term_lexical_words)";
+        sql = "INSERT INTO term (term_id, term_marked, term_text, term_lexical_words)"
+            + " VALUES (:term_id, :term_marked, :term_text, :term_lexical_words)";
 
         LOG.trace(sql);
         LogParameters(paramSource);
         jt.update(sql, paramSource);
         term.setId(termId);
       } else {
-        String sql = "UPDATE term" + " SET term_marked = :term_marked" + ", term_text = :term_text" + ", term_lexical_words = :term_lexical_words"
+        String sql = "UPDATE term"
+            + " SET term_marked = :term_marked"
+            + ", term_text = :term_text"
+            + ", term_lexical_words = :term_lexical_words"
             + " WHERE term_id = :term_id";
 
         paramSource.addValue("term_id", term.getId());
@@ -479,8 +517,12 @@ public class PostGresTerminologyBase implements TerminologyBase {
   @Override
   public Context findContext(Term term, String fileName, int lineNumber, int columnNumber) {
     NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT " + SELECT_CONTEXT + " FROM context" + " WHERE context_term_id=:context_term_id" + " AND context_file_id=:context_file_id"
-        + " AND context_start_row=:context_start_row" + " AND context_start_column=:context_start_column";
+    String sql = "SELECT " + SELECT_CONTEXT + " FROM context"
+        + " WHERE context_term_id=:context_term_id"
+        + " AND context_file_id=:context_file_id"
+        + " AND context_start_row=:context_start_row"
+        + " AND context_start_column=:context_start_column"
+        + " AND context_project_id=:project_id";
 
     int fileId = this.getFileId(fileName);
     MapSqlParameterSource paramSource = new MapSqlParameterSource();
@@ -488,6 +530,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
     paramSource.addValue("context_file_id", fileId);
     paramSource.addValue("context_start_row", lineNumber);
     paramSource.addValue("context_start_column", columnNumber);
+    paramSource.addValue("project_id", this.getCurrentProjectId());
 
     LOG.trace(sql);
     LogParameters(paramSource);
@@ -519,6 +562,7 @@ public class PostGresTerminologyBase implements TerminologyBase {
       paramSource.addValue("context_text", context.getTextSegment());
       paramSource.addValue("context_term_id", context.getTermId());
       paramSource.addValue("context_file_id", context.getFileId());
+      paramSource.addValue("project_id", this.getCurrentProjectId());
 
       if (context.isNew()) {
         String sql = "SELECT nextval('seq_context_id')";
@@ -526,17 +570,23 @@ public class PostGresTerminologyBase implements TerminologyBase {
         int contextId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("context_id", contextId);
 
-        sql = "INSERT INTO context (context_id, context_start_row, context_start_column, context_end_row, context_end_column, context_text, context_file_id, context_term_id)"
-            + " VALUES (:context_id, :context_start_row, :context_start_column, :context_end_row, :context_end_column, :context_text, :context_file_id, :context_term_id)";
+        sql = "INSERT INTO context (context_id, context_start_row, context_start_column, context_end_row, context_end_column, context_text, context_file_id, context_term_id, context_project_id)"
+            + " VALUES (:context_id, :context_start_row, :context_start_column, :context_end_row, :context_end_column, :context_text, :context_file_id, :context_term_id, :project_id)";
 
         LOG.trace(sql);
         LogParameters(paramSource);
         jt.update(sql, paramSource);
         context.setId(contextId);
       } else {
-        String sql = "UPDATE context" + " SET context_start_row = :context_start_row" + ", context_start_column = :context_start_column"
-            + ", context_end_row = :context_end_row" + ", context_end_column = :context_end_column" + ", context_text = :context_text"
-            + ", context_file_id = :context_file_id" + ", context_term_id = :context_term_id" + " WHERE context_id = :context_id";
+        String sql = "UPDATE context"
+            + " SET context_start_row = :context_start_row"
+            + ", context_start_column = :context_start_column"
+            + ", context_end_row = :context_end_row"
+            + ", context_end_column = :context_end_column"
+            + ", context_text = :context_text"
+            + ", context_file_id = :context_file_id"
+            + ", context_term_id = :context_term_id"
+            + " WHERE context_id = :context_id";
 
         paramSource.addValue("context_id", context.getId());
         LOG.trace(sql);
@@ -554,8 +604,6 @@ public class PostGresTerminologyBase implements TerminologyBase {
     }
 
     public PostGresContext mapRow(SqlRowSet rs) {
-      // context_id, context_start_row, context_start_column,
-      // context_text, context_file_id, context_term_id
       PostGresContext context = newContext();
       context.setId(rs.getInt("context_id"));
       context.setTextSegment(rs.getString("context_text"));
@@ -563,7 +611,9 @@ public class PostGresTerminologyBase implements TerminologyBase {
       context.setLineNumber(rs.getInt("context_start_row"));
       context.setEndColumnNumber(rs.getInt("context_end_column"));
       context.setEndLineNumber(rs.getInt("context_end_row"));
+      context.setFileId(rs.getInt("context_file_id"));
       context.setFileName(getFileName(rs.getInt("context_file_id")));
+      context.setTermId(rs.getInt("context_term_id"));
       context.setDirty(false);
       return context;
     }
@@ -630,38 +680,6 @@ public class PostGresTerminologyBase implements TerminologyBase {
     return fileName;
   }
 
-  int getTextId(String text) {
-    int textId = 0;
-
-    NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-    String sql = "SELECT text_id FROM text WHERE text_text=:text_text";
-    MapSqlParameterSource paramSource = new MapSqlParameterSource();
-    paramSource.addValue("text_text", text);
-
-    LOG.trace(sql);
-    LogParameters(paramSource);
-    try {
-      textId = jt.queryForObject(sql, paramSource, Integer.class);
-    } catch (EmptyResultDataAccessException ex) {
-      // do nothing
-    }
-
-    if (textId == 0) {
-      sql = "SELECT nextval('seq_text_id')";
-      LOG.trace(sql);
-      textId = jt.queryForObject(sql, paramSource, Integer.class);
-      paramSource.addValue("text_id", textId);
-
-      sql = "INSERT INTO text (text_id, text_text)" + " VALUES (:text_id, :text_text)";
-
-      LOG.trace(sql);
-      LogParameters(paramSource);
-      jt.update(sql, paramSource);
-    }
-
-    return textId;
-  }
-
   int getFileId(String fileName) {
     int fileId = 0;
     Integer fileIdObj = filenameMap.get(fileName);
@@ -679,44 +697,20 @@ public class PostGresTerminologyBase implements TerminologyBase {
         // do nothing
       }
 
-      boolean haveProjectFile = false;
       if (fileId == 0) {
         sql = "SELECT nextval('seq_file_id')";
         LOG.trace(sql);
         fileId = jt.queryForObject(sql, paramSource, Integer.class);
         paramSource.addValue("file_id", fileId);
 
-        sql = "INSERT INTO file (file_id, file_name)" + " VALUES (:file_id, :file_name)";
+        sql = "INSERT INTO file (file_id, file_name)"
+            + " VALUES (:file_id, :file_name)";
 
         LOG.trace(sql);
         LogParameters(paramSource);
         jt.update(sql, paramSource);
-      } else {
-        sql = "SELECT projectfile_file_id FROM projectfile" + " WHERE projectfile_file_id = :file_id" + " AND projectfile_project_id = :project_id";
-        paramSource = new MapSqlParameterSource();
-        paramSource.addValue("file_id", fileId);
-        paramSource.addValue("project_id", this.getCurrentProjectId());
-        LOG.trace(sql);
-        LogParameters(paramSource);
-        try {
-          jt.queryForObject(sql, paramSource, Integer.class);
-          haveProjectFile = true;
-        } catch (EmptyResultDataAccessException ex) {
-          haveProjectFile = false;
-        }
       }
       filenameMap.put(fileName, fileId);
-
-      if (!haveProjectFile) {
-        sql = "INSERT INTO projectfile (projectfile_project_id, projectfile_file_id)" + " VALUES (:project_id, :file_id)";
-        paramSource = new MapSqlParameterSource();
-        paramSource.addValue("file_id", fileId);
-        paramSource.addValue("project_id", this.getCurrentProjectId());
-
-        LOG.trace(sql);
-        LogParameters(paramSource);
-        jt.update(sql, paramSource);
-      }
 
     } else {
       fileId = fileIdObj.intValue();
@@ -729,7 +723,8 @@ public class PostGresTerminologyBase implements TerminologyBase {
     PostGresTerm iTerm = (PostGresTerm) term;
     for (Term expansion : iTerm.getExpansionSet().getItemsAdded()) {
       NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-      String sql = "INSERT INTO term_expansions (termexp_term_id, termexp_expansion_id)" + " VALUES (:termexp_term_id, :termexp_expansion_id)";
+      String sql = "INSERT INTO term_expansions (termexp_term_id, termexp_expansion_id)"
+          + " VALUES (:termexp_term_id, :termexp_expansion_id)";
       MapSqlParameterSource paramSource = new MapSqlParameterSource();
       paramSource.addValue("termexp_term_id", iTerm.getId());
       paramSource.addValue("termexp_expansion_id", ((PostGresTerm) expansion).getId());
@@ -745,7 +740,8 @@ public class PostGresTerminologyBase implements TerminologyBase {
     PostGresTerm iTerm = (PostGresTerm) term;
     for (Term head : iTerm.getHeadSet().getItemsAdded()) {
       NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
-      String sql = "INSERT INTO term_heads (termhead_term_id, termhead_head_id)" + " VALUES (:termhead_term_id, :termhead_head_id)";
+      String sql = "INSERT INTO term_heads (termhead_term_id, termhead_head_id)"
+          + " VALUES (:termhead_term_id, :termhead_head_id)";
       MapSqlParameterSource paramSource = new MapSqlParameterSource();
       paramSource.addValue("termhead_head_id", ((PostGresTerm) head).getId());
       paramSource.addValue("termhead_term_id", iTerm.getId());
@@ -758,15 +754,48 @@ public class PostGresTerminologyBase implements TerminologyBase {
   }
 
   PostGresTerm newTerm() {
-    PostGresTerm term = new PostGresTermImpl();
+    PostGresTerm term = new PostGresTerm();
     term.setTerminologyBase(this);
     return term;
   }
 
   PostGresContext newContext() {
-    PostGresContext context = new PostGresContextImpl();
+    PostGresContext context = new PostGresContext();
     context.setTerminologyBase(this);
     return context;
   }
 
+  public void clearDatabase() {
+    Config config = ConfigFactory.load().getConfig("talismane.terminology.jdbc");
+    boolean testDatabase = config.getBoolean("test-database");
+    if (!testDatabase) {
+      throw new RuntimeException("Cannot clear database if it isn't a test database");
+    }
+    
+    NamedParameterJdbcTemplate jt = new NamedParameterJdbcTemplate(this.getDataSource());
+    
+    String sql = "DELETE FROM context";
+    MapSqlParameterSource paramSource = new MapSqlParameterSource();
+    jt.update(sql, paramSource);
+    
+    sql = "DELETE FROM file";
+    paramSource = new MapSqlParameterSource();
+    jt.update(sql, paramSource);
+
+    sql = "DELETE FROM project";
+    paramSource = new MapSqlParameterSource();
+    jt.update(sql, paramSource);
+
+    sql = "DELETE FROM term_expansions";
+    paramSource = new MapSqlParameterSource();
+    jt.update(sql, paramSource);
+    
+    sql = "DELETE FROM term_heads";
+    paramSource = new MapSqlParameterSource();
+    jt.update(sql, paramSource);
+    
+    sql = "DELETE FROM term";
+    paramSource = new MapSqlParameterSource();
+    jt.update(sql, paramSource);
+  }
 }
