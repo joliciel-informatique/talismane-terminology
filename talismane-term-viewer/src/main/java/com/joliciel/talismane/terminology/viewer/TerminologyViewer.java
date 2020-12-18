@@ -27,7 +27,7 @@ public class TerminologyViewer extends Application {
     final OptionSpec<File> logConfigFileSpec = parser.accepts("logConfigFile", "logback configuration file").withRequiredArg().ofType(File.class);
 
     OptionSet options = parser.parse(args);
-    if (args.length == 0 || options.has("help")) {
+    if (options.has("help") || options.has("?")) {
       parser.printHelpOn(System.out);
       return;
     }

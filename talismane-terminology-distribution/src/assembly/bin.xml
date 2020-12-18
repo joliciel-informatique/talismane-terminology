@@ -28,6 +28,10 @@
       <outputDirectory>docker-compose</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>../migration</directory>
+      <outputDirectory>migration</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>..</directory>
       <includes>
         <include>Makefile</include>
