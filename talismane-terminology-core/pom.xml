@@ -15,7 +15,7 @@
         <talismane.english.pack.url>
             https://github.com/joliciel-informatique/talismane/releases/download/v6.1.0/englishLanguagePack-6.1.0.zip
         </talismane.english.pack.url>
-        <talismane.language.packs.path>${project.basedir}/../languagePacks</talismane.language.packs.path>
+        <talismane.language.packs.path>${project.basedir}/../</talismane.language.packs.path>
     </properties>
     <build>
         <plugins>

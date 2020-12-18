@@ -32,9 +32,17 @@
       <outputDirectory>migration</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>../conf</directory>
+      <outputDirectory>conf</outputDirectory>
+      <excludes>
+        <exclude>talismane_terminology_viewer.ini</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
       <directory>..</directory>
       <includes>
         <include>Makefile</include>
+        <include>*LanguagePack*.zip</include>
       </includes>
       <outputDirectory></outputDirectory>
     </fileSet>
