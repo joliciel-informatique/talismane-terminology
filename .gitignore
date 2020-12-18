@@ -11,4 +11,4 @@ logs/
 .idea
 *.iml
 talismane_terminology_viewer.ini
-languagePacks/*.zip
+*LanguagePack*.zip
