@@ -16,3 +16,4 @@ services:
       POSTGRES_MULTIPLE_DATABASES: '"terms","terms-test"'
     ports:
       - "${TALISMANE_DATABASE_PORT:-5432}:5432"
+    restart: unless-stopped
