@@ -1,0 +1,192 @@
+Moteur Stirling
+Page d’aide sur l’homonymie
+Pour les articles homonymes, voir Stirling.
+
+Le moteur Stirling est un moteur à combustion externe et à fluide de travail en cycle fermé. Le fluide est un gaz soumis à un cycle comprenant quatre phases : chauffage isochore (à volume constant), détente isotherme (à température constante), refroidissement isochore, enfin compression isotherme.
+
+Robert Stirling a inventé en 1816 le moteur à air chaud1 et, pour améliorer son efficacité, l'a muni d'un régénérateur, qui assure une fonction de stockage thermique et d'échangeur interne. Cet élément singularise le moteur Stirling par rapport aux autres moteurs. Il a considérablement amélioré sa performance, lui donnant un réel développement en thermodynamique.
+
+Peu connu du grand public, ce moteur a cependant quelques avantages. Il était répandu au temps de la domination des machines à vapeur qui présentaient le grave risque d'exploser.
+Modèle de moteur de type alpha.
+La source chaude est du côté rouge ; la source froide est du côté bleu, entourée d'ailettes (dissipateur thermique). Le régénérateur, généralement placé sur la conduite, est ici absent.
+Moteur Stirling de type bêta. Le rôle du piston intermédiaire (non étanche, de plus petit diamètre), dit « déplaceur », est de faire passer alternativement le gaz de la source chaude (à gauche, représentée par des flammes) à la source froide (à droite, représentée par des ailettes de refroidissement). Le changement de couleur, du bleu au rouge et réciproquement, indique le changement de température. La roue est un volant d'inertie. Le piston moteur a un retard de phase de π/2 (un quart de tour) par rapport au piston déplaceur.
+Maquette d'un moteur Stirling.
+Coupe d'un moteur rider à compression, 1880.
+Gravure de 1899 d'un Moteur Ericsson M1851 avec régénérateur type Stirling.
+Sommaire
+
+    1 Histoire
+    2 Principe, avantages et inconvénients
+        2.1 Principe
+            2.1.1 Cycle de Stirling
+        2.2 Avantages
+        2.3 Inconvénients
+    3 Utilisation
+    4 Types de moteur Stirling
+        4.1 Stirling alpha
+        4.2 Stirling bêta
+        4.3 Stirling gamma
+    5 Autres évolutions du principe
+    6 Notes et références
+    7 Annexes
+        7.1 Articles connexes
+        7.2 Bibliographie
+        7.3 Liens externes
+
+Histoire
+
+Au début du XIXe siècle, les chaudières à vapeur explosent assez souvent. Pour répondre à ce problème, Robert Stirling imagine un moteur dépourvu de chaudière soumise à de trop fortes pressions, où la chaleur est donc apportée de l’extérieur de la machine. Il découvre qu'il suffit de chauffer l’air ambiant par combustion pour alimenter ce moteur en énergie et c'est ainsi que Stirling dépose son brevet le 27 septembre 1816. Il est aussi l'inventeur d’un régénérateur dans la tuyauterie du moteur qui permet d’éviter trop de pertes d’énergie et améliore son rendement. À proprement parler, ce régénérateur est ce qui distingue le moteur Stirling des autres machines à air chaud2.
+
+En 1843, son frère James « industrialise » ce moteur, pour une utilisation dans l'usine où il est ingénieur. Toutefois, en raison de différents bris et d’une puissance trop faible par rapport à la machine à vapeur[réf. souhaitée] et au moteur à combustion interne, le moteur à air chaud de Stirling n’obtient pas le succès escompté. Le moteur Stirling n'est alors plus qu’un objet d’étude pour les physiciens, qui comprennent le fonctionnement du moteur Stirling, bien après son invention, avec l’avènement de la thermodynamique.
+
+En 1871, les progrès de la thermodynamique accomplis au XIXe siècle permettent à Gustav Schmidt de décrire mathématiquement le cycle de Stirling3.
+
+À partir de 1878, John Ericsson se tourne vers une solution utilisant un cycle de Stirling avec son moteur « à air chaud » (moteur Ericsson) avec un déplaceur et construit, en partenariat avec la DeLameter Iron Works puis la Rider-Ericsson Engine Company, un nouveau moteur. Ce moteur sera aussi un succès, il sera produit aux États-Unis jusqu'au début de la Première Guerre mondiale. Parmi tous les moteurs à cycle Stirling conçus, c'est la version la plus commune, bien que rare car centenaire ; il est possible d'en voir à la vente chez des brocanteurs spécialisés dans les moteurs anciens.
+
+En 1889, la société américaine Rider-Ericsson Engine Company4 sort sa première pompe hydraulique « à air chaud » ; elle en produira jusqu'au début 1900 et en exportera partout à travers le monde.
+Photographies du moteur Stirling Philips MP1002CA5.
+
+Il faut toutefois attendre les recherches de la compagnie néerlandaise Philips, dans les années 1930, pour que le moteur Stirling soit de nouveau étudié sérieusement et que son application dans toutes sortes de technologies soit testée. En 1938, un moteur Stirling de plus de 200 ch, avec un rendement supérieur à 30 % (comparable aux moteurs à essence actuels), y est conçu[réf. souhaitée]. Cependant, cette technologie n'a d'application qu’en cryogénie.
+
+En 1953, Philips sort sa génératrice de 180 W : le MP1002CA6, conçu à partir d'un moteur Stirling.
+
+Ce n’est que dans les dernières décennies que les développements du moteur commencent à intéresser à nouveau l'industrie, à cause du besoin croissant de sources d’énergie alternatives. De fait, le moteur Stirling peut fonctionner avec toute source d'énergie produisant de la chaleur : énergie solaire, énergie géothermique, énergie nucléaire, chaleur rejetée par les usines, etc. Dans une perspective écologique, ceci est d'autant plus intéressant que le régénérateur, parce qu’il préchauffe et pré-refroidit le gaz, permet de « recycler » de l’énergie. Ainsi, les avancées en science des matériaux permettent-elles maintenant d'utiliser des matériaux qui supportent des écarts de température très importants et des composites qui améliorent le transfert de chaleur au sein du régénérateur7.
+Coupe d'un moteur Stirling de type bêta.
+Source chaude côté rose, source froide côté gris, piston de déplacement en vert, piston moteur en bleu (ce moteur est dit à « entraînement rhombique », c'est-à-dire en forme de losange déformable).
+
+La situation est telle que les moteurs Stirling, couplés avec des paraboles solaires géantes, utilisent l’énergie solaire avec un rendement supérieur aux cellules photovoltaïques, mais à un prix élevé. En 2008, le record de conversion de l'énergie solaire est battu, avec un taux de conversion de 31,25 %, grâce à l'utilisation de miroirs paraboliques comme concentrateurs solaires8.
+
+Aujourd'hui, le moteur Stirling fait l'objet de nombreuses expérimentations autant par les amateurs que par des entreprises spécialisées en énergie ou par la NASA (projet KRUSTY).
+Principe, avantages et inconvénients
+Principe
+
+Le fluide principal qui produit un travail est un gaz (air, hydrogène ou hélium) soumis à un cycle comprenant quatre phases :
+
+    chauffage isochore (à volume constant) ;
+    détente isotherme (à température constante) : le gaz fournit du travail ;
+    refroidissement isochore ;
+    compression isotherme : le gaz reçoit du travail.
+
+Le but est de produire de l’énergie mécanique à partir d’énergie thermique. Au début du cycle, le gaz à l’intérieur du moteur est placé dans la chambre chaude, chauffée par une certaine source d’énergie : sa température et sa pression augmentent, ce qui produit une dilatation du gaz (phase 1). Le piston de la chambre chaude étant en butée, le gaz se détend vers la chambre froide en repoussant le piston de celle-ci. L'énergie thermique est ainsi transformée en énergie mécanique qui est transmise à la roue (phase 2). Ce mouvement de la roue est transmis au piston de la chambre chaude qui repousse presque tout le gaz dans la chambre froide. Lorsque c'est fait, le gaz arrivé dans la chambre froide se refroidit (phase 3) et son volume diminue, entraînant le piston froid dans l'autre sens (phase 4). De nouveau, ce mouvement est transmis, via la roue, au piston de la chambre chaude qui recule alors vers sa butée. Presque tout le volume de gaz se retrouve alors aspiré vers la chambre chaude et le cycle recommence. On nomme ce cycle thermodynamique le cycle de Stirling (bien que ce ne soit pas Stirling qui l’ait décrit)9.
+
+La source chaude du moteur (le piston rouge ci-dessus) est alimentée par une source externe quelconque : combustion externe de dérivés du pétrole, gaz naturel, charbon, mais aussi énergies renouvelables comme l'énergie solaire, le bois ou l'énergie géothermique.
+Cycle de Stirling
+Diagramme de Clapeyron du cycle de Stirling théorique. Dans les applications pratiques utilisant le cycle de Stirling, le cycle est quasi-elliptique
+Inscription d'un cycle de Stirling réel dans un cycle de Carnot. Diagramme de Clapeyron et diagramme TS (Température-Entropie). Les cycles correspondant dans les deux diagrammes ont même aire. Sur cet exemple, les rendements thermodynamiques sont η Carnot = T 1 − T 0 T 1 ≈ 0.37 {\displaystyle \scriptstyle \eta _{\text{Carnot}}={\frac {T_{1}-T_{0}}{T_{1}}}\approx 0.37} \scriptstyle \eta _{{{\text{Carnot}}}}={\frac {T_{1}-T_{0}}{T_{1}}}\approx 0.37 et η Stirling = aire violette aire hachuree ≈ 0.15 {\displaystyle \scriptstyle \eta _{\text{Stirling}}={\frac {\text{aire violette}}{\text{aire hachuree}}}\approx 0.15} \scriptstyle \eta _{{{\text{Stirling}}}}={\frac {{\text{aire violette}}}{{\text{aire hachuree}}}}\approx 0.15
+
+Le cycle de Stirling est un cycle thermodynamique que décrivent les moteurs Stirling.
+
+Le cycle est réversible, ce qui signifie que si un travail mécanique est fourni, il peut fonctionner comme une pompe à chaleur et fournir de la chaleur ou du froid (y compris du froid cryogénique).
+
+Le cycle est fermé régénératif, utilisant un fluide gazeux :
+
+    « cycle fermé » signifie que le fluide travaillant est en permanence contenu dans la machine thermodynamique. Ceci catégorise également un moteur à combustion externe ;
+    « régénératif » fait référence à la présence d'un échangeur de chaleur interne qui permet d’accroître le rendement thermique de l'appareil.
+
+Le cycle est le même que la plupart des cycles thermiques et comprend quatre phases : 1. compression, 2. chauffage, 3. détente, 4. refroidissement (cf. diagramme de Clapeyron sur la gauche) :
+
+    points 1 à 2 : détente isotherme. La zone de détente est chauffée par l'extérieur, ainsi le gaz suit une détente isotherme.
+    points 2 à 3 : refroidissement à volume constant (isochore). Le gaz passe dans le régénérateur, se refroidit en lui transférant sa chaleur qui sera utilisée pour le cycle suivant ;
+    points 3 à 4 : compression isotherme. La zone de compression est refroidie, ainsi le gaz suit une compression isotherme ;
+    points 4 à 1 : chauffage isochore. Le gaz circule dans le régénérateur et prélève de la chaleur.
+
+Avantages
+
+Dans la mesure où il produit peu de vibrations grâce à l'absence d'explosion, de valves qui s'ouvrent et se ferment et de gaz qui s'échappent, le moteur Stirling est silencieux et peu soumis aux contraintes mécaniques, ce qui le rend utile où l'on dispose de chaleur, de froid et où les vibrations sont indésirables, par exemple dans un sous-marin nucléaire.
+
+L'absence d’échange de gaz avec le milieu extérieur le rend utile dans les milieux pollués ou qu'il faut éviter de contaminer.
+
+Il est d'un entretien facile du fait de son absence d'échange de matière avec son environnement et de réaction chimique interne. Pour les mêmes raisons, il se détériore moins qu'un moteur à combustion interne.
+
+Il présente un bon rendement, pouvant avoisiner les 40 %10[source insuffisante], tandis que le rendement d'un moteur à explosion pour usage automobile atteint 35 % pour l'essence et 42 % pour le diesel. Les moteurs électriques, dont le rendement peut atteindre 99 %, ne sont pas comparables, car l'électricité est une forme d'énergie dont la qualité n'est pas comparable à celles thermiques et/ou chimiques utilisées pour les moteurs Stirling ou à explosion (voir la notion d'exergie). Par ailleurs, l'électricité est difficile à stocker et à transporter avec un rendement proche de 100 %, ce qui est une limite forte pour certaines applications. On peut également discuter du niveau de comparabilité des sources d'énergies utilisées entre moteur Stirling et moteur à explosion, et surtout des écarts de température entre source froide et source chaude pour lesquels sont annoncés les pics de rendement, relativement au pic de rendement de Carnot.
+
+Le moteur est inversible : un moteur Stirling entraîné par un autre moteur devient une pompe à chaleur capable de refroidir à −200 °C ou de chauffer à plus de 700 °C, selon le sens d'entraînement. Ceci, sans employer de gaz spéciaux avec des propriétés spécifiques, lesquelles leur confèrent des inconvénients pratiques ou chimiques (comme le fréon des machines frigorifiques d'anciennes générations, destructeur de la couche d'ozone). En pratique, d'ailleurs, c'est la fonction de pompe à chaleur efficace qui permet à quelques machines d'exister.
+
+Il est multi-source. Du fait de son mode d'alimentation en chaleur, ce moteur peut fonctionner à partir de n'importe quelle source de chaleur (combustion d'un carburant quelconque, solaire, nucléaire, voire chaleur humaine).
+
+Il présente une pollution potentiellement plus faible que les moteurs thermiques : la chaleur venant de l'extérieur, il est possible, grâce aux énergies non fossiles, de la fournir de façon moins polluante que dans bien des moteurs thermiques dans lesquels la combustion est imparfaite.
+Inconvénients
+
+Au rang des inconvénients, l'étanchéité des pistons doit être plus importante que dans un moteur à combustion interne mais cela est plus difficile à réaliser à cause des très fortes variations de température et de la nécessité d'utiliser un gaz le moins visqueux possible, afin de minimiser les pertes par frottement (en particulier dans le régénérateur). L'utilisation d'un gaz très faiblement visqueux, par exemple l'hydrogène, pose souvent des problèmes d'étanchéité.
+
+Il est de conception délicate ; alors que les moteurs à combustion interne produisent la chaleur directement au sein du fluide, très vite et de façon très homogène, un système Stirling repose sur des transferts thermiques entre le gaz et les échangeurs (les deux sources, le récupérateur), alors que les gaz sont des isolants thermiques où les échanges sont très lents. De plus, il faut minimiser le volume « mort » (contenant du fluide qui n'accomplit pas le cycle et donc ne contribue pas au rendement). Tout cela pose des problèmes de dynamique des fluides, problèmes difficiles à résoudre, au niveau des échangeurs, du récupérateur, des tuyaux ou du piston qui permettent le déplacement du gaz au cours du cycle (problèmes de diamètre, de longueur, de turbulences à créer ou éviter, etc.).
+Si ce bandeau n'est plus pertinent, retirez-le. Cliquez ici pour en savoir plus sur les bandeaux.
+Le paragraphe suivant semble contenir un travail inédit ou des déclarations non vérifiées (septembre 2016).
+
+Vous pouvez aider en ajoutant des références ou en supprimant le contenu inédit. Voir la page de discussion pour plus de détails.
+
+Il est difficile à commander. L'un de ses inconvénients est le manque de réactivité. Pour faire varier la puissance du moteur on fait en général varier la puissance de chauffe. Or à cause de la grande inertie thermique des échangeurs, l'augmentation de puissance est beaucoup plus lente que celle des moteurs à combustion interne courants. La variation de régime de ce moteur est difficile à réaliser, car elle ne peut se faire qu'en agissant sur le taux de compression du fluide de travail ou en augmentant la chaleur de la source chaude, ou en diminuant celle de la source froide. Cet inconvénient peut se corriger, à l'aide de procédés tels qu'une boîte de vitesses dans le cas de l'entraînement d'un arbre de transmission vers des roues, ou de changement de pas dans celui de l'entraînement d'une hélice. C'est pourquoi le moteur Stirling est considéré comme ayant une très mauvaise aptitude à produire une puissance et un couple variables, inconvénient considéré comme très important pour la propulsion automobile, notamment, alors que c'est justement cette application qui a fait la fortune du moteur à combustion interne. Cependant cet inconvénient pourrait se réduire dans le cas d'un « système hybride » (le moteur marche alors à régime constant, la modulation de puissance étant prise en charge par le système électrique), mais ils sont encore rares. Sur un bateau ou un avion à hélice à pas variable, ceci n'est cependant pas un inconvénient. On pourrait également imaginer un robinet placé sur le tuyau séparant les deux pistons, qui pourrait au besoin diminuer le rendement, donc la vitesse, en étant plus ou moins fermé. Cette idée présente par contre le défaut de gaspiller de l'énergie thermique, puisque c'est le rendement qui diminue et qu'autant de combustible est consommé. Il faudrait donc pour les grandes périodes de ralenti coupler ce robinet à un réglage du débit de combustible de façon à progressivement diminuer la quantité de combustible et rouvrir le robinet de rendement jusqu'à une valeur relativement élevée (mais pas maximum, afin de garantir de la reprise lors d'une augmentation de puissance). Ainsi, lors d'une accélération, on pourrait avoir immédiatement un meilleur rendement, donc plus de vitesse, et peu après récupérer en plus l'énergie fournie par l'augmentation de carburant.
+
+Il est enfin d'un prix élevé : n'ayant aujourd'hui que peu d'applications en grande série (voir générateurs Whispergen), contrairement au moteur à combustion interne, il est bien plus cher ; de plus, pour la même raison, les industriels ne lui accordent pas le même intérêt en matière de recherche et développement, ce qui ne lui permet pas de combler son retard (en supposant cela possible). Cette situation pourrait évoluer favorablement avec le développement des recherches sur la production d'énergie et particulièrement sur celles concernant les énergies renouvelables.
+Utilisation
+En Espagne, à la Plataforma Solar de Almería, moteur Stirling installé au foyer d'un miroir parabolique.
+
+Le moteur Stirling a des applications de niches, dans des situations où le coût initial du système n'est pas un inconvénient grave par rapport aux avantages (applications militaires, de recherche, de pointe).
+
+    La principale application commerciale du moteur Stirling est dans le domaine de la réfrigération industrielle et militaire. Il sert de machine pour la liquéfaction des gaz et comme refroidisseur pour les systèmes de guidage militaire infrarouge.
+    Il est utilisé comme générateur d'électricité en Islande, au Japon et dans les milieux extrêmes tels que les déserts australiens et arctiques par de nombreuses missions scientifiques et militaires.
+    Il est utilisé en association avec une parabole sphérique pour générer de l'électricité à partir de l'énergie solaire. Ce système est couramment appelé « stirling dish ».
+    Il est utilisé par les marines suédoises (sous-marins de Classe Gotland), australiennes et bientôt les sous-marins d'attaque américains[réf. nécessaire] en tant qu'ensemble propulseur principal, non seulement en raison de son silence, propriété cruciale pour les sous-marins, mais aussi pour la bien plus faible production de gaz imbrûlés nécessaire à l'apport d'un gradient thermique (une différence de température) à un moteur Stirling ; en effet, un sous-marin en plongée ne peut évacuer des gaz qu'en les comprimant à une pression au moins égale à celle du milieu ambiant, nécessitant (et donc gaspillant) une part non négligeable de l'énergie disponible à bord.
+    Ce moteur équipe aussi certaines classes de frégates américaines, le système de refroidissement du réacteur nucléaire de nombreux sous-marins et porte-avions ainsi que des drones à grande autonomie.
+    En raison de sa capacité polycarburant il a été testé avec succès par l'URSS sur quelques prototype de chars lourds dont l'object 167 avant d'être abandonné pour des raisons d'ordre politique autant qu'économique, lors du passage à l'économie de marché à la chute du bloc soviétique.
+    La NASA compte l'utiliser pour fournir de l'énergie aux satellites et sondes spatiales, en test dans le projet KRUSTY.
+    Le constructeur de cartes mères d'ordinateur personnel MSI a présenté début 2008 un système de refroidissement dont le ventilateur est actionné par un moteur Stirling utilisant comme source de chaleur l'énergie dégagée par la puce à refroidir11.
+    La plupart des grands constructeurs de chaudières proposent en 2009 une centrale de micro-cogénération utilisant un moteur Stirling. Ce type de chaudière de la taille d'un chauffe-eau permet non seulement de chauffer de l'eau à utilisation domestique (chauffage, eau chaude sanitaire) mais également de produire de l'électricité localement12.
+    Nombre d'exemplaires sont utilisés à des fins pédagogiques en classe de physique pour démontrer les principes de la thermodynamique. Certains fonctionnant grâce à la chaleur du Soleil concentrée par une parabole à l'instar des modèles utilisés dans certaines centrales solaires produisant de l'électricité, d'autres ne nécessitant que la chaleur d'une tasse à café ou celle de la paume d'une main pour fonctionner13,14.
+
+Types de moteur Stirling
+Stirling alpha
+
+Un Stirling alpha contient deux pistons de puissance séparés, un piston « chaud », et un piston « froid ». Le piston chaud est situé près de l'échangeur avec la plus haute température, et le piston froid est situé près du point d'échange de température la plus basse.
+
+Ce type de moteur a un ratio puissance-volume très élevé, mais a des problèmes techniques, liés (fréquemment) aux températures trop élevées du piston chaud pour ses joints.
+
+Ci-dessous un schéma de moteur Stirling alpha (explications pour une rotation dans le sens horaire). Un récupérateur de chaleur est présent dans le tuyau, mais n'est pas représenté.
+
+    1. Le gaz de travail, chauffé au contact des parois du cylindre chaud, tend à occuper plus de place et repousse le piston chaud au fond de sa course (vers la gauche). Lorsqu'il est arrivé en butée, l'expansion du gaz se poursuit en direction du cylindre froid et repousse le piston froid (vers le haut). Ces mouvements sont transmis à la roue.
+
+    2. Le gaz est maintenant à son volume maximal. La roue transmet son mouvement au piston chaud (vers la droite), ce qui envoie la plus grande partie du gaz vers le cylindre froid, où il va se refroidir.
+
+    3. Presque tout le gaz est maintenant dans le cylindre froid et le refroidissement du gaz continue. La pression du gaz est à son minimum. Il se contracte et le piston froid redescend.
+
+    4. Le gaz est maintenant à son volume minimum et le piston chaud est tiré vers la gauche par la roue et les transmissions. Le gaz est ainsi aspiré dans le cylindre chaud. Comme il se réchauffe, son volume augmente et le cycle recommence.
+
+Cliquez sur une vignette pour l’agrandir.
+Stirling bêta
+Principe du moteur Stirling bêta à entraînement rhombique. Cet appareil est muni d'un régénérateur.
+
+Un Stirling bêta utilise également un volume de gaz délimité entre deux pistons. Ces deux pistons combinent :
+
+    un mouvement relatif lors du changement de volume du gaz ;
+    un mouvement commun qui déplace ce volume de la partie chaude vers la partie froide, et vice-versa.
+
+Les volumes situés de l'autre côté des pistons ne sont pas fonctionnels. Sur l'illustration du haut de page, on aperçoit d'ailleurs l'orifice de communication de l'un de ces volumes avec l'extérieur. Les pistons sont donc tous les deux étanches. Le principe du moteur beta s'approche en réalité de celui du moteur gamma, à la différence que les deux zones chaude et froide sont situées dans le même cylindre. Les avantages sont la compacité et l'absence de perte aérodynamique [réf. nécessaire] ; l'inconvénient principal provient des pertes thermiques par conduction.
+
+Il existe des moteurs Stirling à pistons coaxiaux, qualifiés également de moteur bêta, dont l'un des deux pistons n'est pas étanche : il joue alors le rôle de déplaceur, et le volume situé au-dessus du déplaceur est fonctionnel. Ces moteurs s'apparentent donc aux moteurs gamma décrits ci-après, mais sans volume mort.
+Stirling gamma
+Moteur Stirling de type gamma fonctionnant grâce à la différence de température entre l'air ambiant et la paume de la main15.
+
+Un Stirling gamma est un moteur stirling doté d'un piston de puissance et d'un piston jouant à lui seul le rôle de déplaceur. Seul le piston moteur dispose d'un système d'étanchéité.
+
+Le déplaceur occupe successivement la zone chaude et la zone froide, chassant à chaque fois le gaz vers la zone opposée. Les variations de température que le gaz subit alors engendrent des variations de pression qui mettent en mouvement le piston moteur.
+
+Le volume balayé par le déplaceur ne pouvant nécessairement pas être balayé par le piston de puissance, il constitue un volume mort. Pour cette raison, le moteur Gamma ne peut pas atteindre des rapports de compression élevés, ce qui limite les possibilités de rendement. En revanche, sa simplicité mécanique en fait un système largement utilisé, également sur les moteurs à plusieurs cylindres.
+
+Certains moteurs Gamma ont un déplaceur étanche : le gaz emprunte donc un circuit externe pour passer d'une zone à l'autre ; il est alors possible de placer un régénérateur sur ce circuit extérieur, augmentant le rendement.
+Autres évolutions du principe
+Générateur Stirling-Juillet à piston libre entraînant un alternateur linéaire.
+
+De nombreuses déclinaisons ont été proposées16 :
+
+    un moteur à piston libre et à alternateur linéaire a été inventé par le thermodynamicien Hubert Juillet et breveté à l'INPI le 4 septembre 1967 sous le no P.V.190063[réf. nécessaire]. Ce moteur a été modifié par la suite en y ajoutant des pièces élastiques en remplacement de pièces mécaniques et opérant sous un cycle Stirling (dessin de la NASA[réf. nécessaire]). En 2015, ce générateur Stirling-Juillet est produit industriellement, par la société Microgen Engine Corporation limited, et commercialisé pour la micro-cogénération par la société Wiessmann17 et la société Dedietrich18 ;
+
+Article connexe : Moteur à pistons libres.
+
+    la fluidyne est une pompe à moteur Stirling dont les clapets sont les seules pièces mécaniques en mouvement19 ;
+    le montage de moteurs Stirling en série permet à chaque piston de jouer le double rôle de déplaceur et de moteur : par exemple, le moteur Franchot comporte deux pistons à double effet et le moteur Siemens quatre20 ;
+    la transposition au moteur rotatif (voir quasiturbine) du principe du moteur Stirling permet de combiner des cycles en séries dans un mouvement rotatif unique ;
+    le moteur Stirling-Vuilleumier utilise des fluides de travail mis en commun, mais son cycle thermodynamique n'est plus celui du moteur Stirling et aborde une autre catégorie de moteurs à combustion externe ;
+    Un demi-tour en blanc, second demi-tour en jaune
+
+Moteur Stirling à double tours
+le moteur Stirling à double tour, conçu en 2020 (breveté) et non encore expérimenté, repose sur le transfert de chambre en chambre d'un volume de gaz pour lui faire subir les quatre phases du cycle de Stirling. Chaque phase se déroule sur un demi-tour de moteur. Un échangeur à contre courant, travaillant aussi sur un demi-tour de moteur, remplace le régénérateur et permet de transférer la chaleur durant la phase de de réchauffement et la phase de refroidissement. Comme les quatre phases du cycle de Stirling ont lieu simultanément, le transfert de chaleur est immédiat.Les sources de chaleur et les sources froides sont distinctes, sauf pour l'échangeur puisque sa paroi interne permet le transfert de chaleur. Il est possible d'isoler complètement ce moteur et il devient impossible de faire de la cogénération. 
