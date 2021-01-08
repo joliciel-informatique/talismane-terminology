@@ -15,7 +15,11 @@
         <talismane.english.pack.url>
             https://github.com/joliciel-informatique/talismane/releases/download/v6.1.0/englishLanguagePack-6.1.0.zip
         </talismane.english.pack.url>
-        <talismane.language.packs.path>${project.basedir}/../</talismane.language.packs.path>
+        <talismane.jar.url>
+            https://github.com/joliciel-informatique/talismane/releases/download/v6.1.2/talismane-core-6.1.2-shaded.jar
+        </talismane.jar.url>
+        <talismane.language.packs.path>${project.basedir}/../languagePacks/</talismane.language.packs.path>
+        <talismane.lib.path>${project.basedir}/../lib/</talismane.lib.path>
     </properties>
     <build>
         <plugins>
@@ -55,6 +59,17 @@
                         <configuration>
                             <url>${talismane.english.pack.url}</url>
                             <outputDirectory>${talismane.language.packs.path}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>talismane-jar</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>${talismane.jar.url}</url>
+                            <outputDirectory>${talismane.lib.path}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

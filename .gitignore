@@ -12,3 +12,4 @@ logs/
 *.iml
 talismane_terminology_viewer.ini
 *LanguagePack*.zip
+*.jar

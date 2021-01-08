@@ -42,9 +42,26 @@
       <directory>..</directory>
       <includes>
         <include>Makefile</include>
-        <include>*LanguagePack*.zip</include>
       </includes>
       <outputDirectory></outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../languagePacks</directory>
+      <includes>
+        <include>*LanguagePack*.zip</include>
+      </includes>
+      <outputDirectory>languagePacks</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../lib</directory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>../examples</directory>
+      <outputDirectory>examples</outputDirectory>
     </fileSet>
   </fileSets>
 </assembly>
