@@ -28,7 +28,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.joliciel" level="DEBUG" />
+	<logger name="com.joliciel.talismane" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="javalog" />
